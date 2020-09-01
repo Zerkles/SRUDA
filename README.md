@@ -1,2 +1,2 @@
-# SRUDA
-System for Rating Unbalanced Data Algorithms
+# balancing
+Rating algorithms to classify imbalanced datasets
