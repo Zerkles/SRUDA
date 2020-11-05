@@ -127,8 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-/data
 *.csv
 test_*
 
-.idea/
+.idea/git push
+data/Criteo_Conversion_Search
