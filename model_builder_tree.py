@@ -1,3 +1,4 @@
+#!/home/kwitnoncy/anaconda3/envs/inz/bin/python
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from collections import Counter
