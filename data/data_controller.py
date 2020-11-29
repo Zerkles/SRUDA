@@ -21,6 +21,15 @@ def get_raw_data(rows_count: int) -> pd.DataFrame:
         names=header
     )
 
+def get_raw_data_all(rows_count: int) -> pd.DataFrame:
+    return pd.read_csv(
+        filepath_or_buffer=os.path.dirname(
+            os.path.abspath(__file__)) + '/Criteo_Conversion_Search/CriteoSearchData',
+        sep='\t',
+        index_col=False,
+        low_memory=False,
+        names=header
+    )
 
 def fun(x):
     if type(x) is int or type(x) is float:
@@ -60,5 +69,7 @@ def get_converted_data(rows_count):
 
 
 if __name__ == '__main__':
-    df = get_raw_data(1000)
-    print(df)
+    # df = get_raw_data_all(10000000)
+    # print(df)
+    print(file_len(os.path.dirname(
+            os.path.abspath(__file__)) + '/Criteo_Conversion_Search/CriteoSearchData'))

@@ -2,7 +2,6 @@ from collections import Counter
 
 from examples.under_sampling_examples import draw_plot, get_classified_data
 
-
 def linear_svc(X_resampled, y_resampled, balancing_method_name: str):
     from sklearn.svm import LinearSVC
     clf = LinearSVC()
