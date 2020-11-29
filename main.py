@@ -2,7 +2,7 @@ from collections import Counter
 
 from balancing.multi_imbalanced import compare_multi_class_methods
 from balancing.over_sampling import compare_oversampling_methods
-from test_train import train_and_score
+from train_score_test import train_and_score
 from balancing.under_sampling import compare_undersampling_methods
 from data import data_controller
 

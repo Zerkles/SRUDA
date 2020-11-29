@@ -1,5 +1,5 @@
 # imbalanced-learn library
-from test_train import train_and_score, percent_change
+from train_score_test import train_and_score, percent_change
 
 
 def random_over_sampler(X, y):

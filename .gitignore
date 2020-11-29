@@ -130,5 +130,5 @@ dmypy.json
 *.csv
 test_*
 
-.idea/git push
+.idea/
 data/Criteo_Conversion_Search
