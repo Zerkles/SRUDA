@@ -7,7 +7,7 @@ from balancing.under_sampling import compare_undersampling_methods
 from data import data_controller
 
 if __name__ == '__main__':
-    samples_count = 100000
+    samples_count = 1000
     X_original, y_original = data_controller.get_converted_data(samples_count)
     print(sorted(Counter(y_original).items()))
 
