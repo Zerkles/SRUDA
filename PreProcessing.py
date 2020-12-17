@@ -89,5 +89,5 @@ analysis=Analysis()
 
 #test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
 
-X,Y=test.get_X_and_Y(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",0.01))
-Features.select_fetures_select_from_model_linearsvc(X,Y,columns[3:22],1000000)
+X,Y=test.get_X_and_Y(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",0.001))
+Features.select_fetures_RFE_RandomForest(X,Y,columns[3:22],100000)
