@@ -21,15 +21,14 @@ class Features:
 
     def select_fetures_select_from_model_LR( X,y,columns,iteration):
         selection = SelectFromModel(estimator=LogisticRegression(max_iter=iteration)).fit(X,y)
-        selected_features = np .array( columns )[ selection . get_support () ]
-        print(" Features selected by SelectFromModel from logistic regression :{}".format(selected_features) )        print ("")            def select_fetures_select_from_model_linearsvc( X,y,columns,iteration):
+        selected_features=np.array(columns)[selection.get_support()]
+        print(" Features selected by SelectFromModel from logistic regression :{}".format(selected_features))    def select_fetures_select_from_model_linearsvc( X,y,columns,iteration):
         selection = SelectFromModel(estimator=LinearSVC(max_iter=iteration)).fit(X,y)
-        selected_features = np .array( columns )[ selection . get_support () ]
-        print(" Features selected by SelectFromModel from Linear SVC :{}".format(selected_features)  )
-        print ("")    def select_fetures_select_from_model_RandomForest( X,y,columns,iteration):
+        selected_features=np.array(columns)[selection.get_support()]
+        print(" Features selected by SelectFromModel from Linear SVC :{}".format(selected_features))    def select_fetures_select_from_model_RandomForest( X,y,columns,iteration):
         selection = SelectFromModel(estimator=RandomForestClassifier()).fit(X,y)
-        selected_features = np .array( columns )[ selection . get_support () ]
-        print(" Features selected by SelectFromModel from random forest :{}".format(selected_features))        print ("")    def select_fetures_select_from_model_lasso( X,y,columns,iteration):
+        selected_features=np.array(columns)[selection.get_support()]
+        print(" Features selected by SelectFromModel from random forest :{}".format(selected_features))    def select_fetures_select_from_model_lasso( X,y,columns,iteration):
         clf = LassoCV().fit(X, y)
         importance = np.abs(clf.coef_)
         print("importance")
@@ -44,14 +43,14 @@ class Features:
         X_transform = sfm.transform(X)
         n_features = sfm.transform(X).shape[1]    def select_fetures_RFE_LR( X,y,columns,iteration):
         selection = RFE(estimator=LogisticRegression()).fit(X,y)
-        selected_features = np .array( columns )[ selection . get_support () ]
-        print(" Features selected by RFE from logistic regression :{}".format(selected_features))        print ("")    def select_fetures_RFE_linearsvc( X,y,columns,iteration):
+        selected_features=np.array(columns)[selection.get_support()]
+        print(" Features selected by RFE from logistic regression :{}".format(selected_features))    def select_fetures_RFE_linearsvc( X,y,columns,iteration):
         selection = RFE(estimator=LinearSVC(max_iter=iteration)).fit(X,y)
-        selected_features = np .array( columns )[ selection . get_support () ]
-        print(" Features selected by RFE from Linear SVC :{}".format(selected_features)  )        print ("")    def select_fetures_RFE_RandomForest( X,y,columns,iteration):
+        selected_features=np.array(columns)[selection.get_support()]
+        print(" Features selected by RFE from Linear SVC :{}".format(selected_features))    def select_fetures_RFE_RandomForest( X,y,columns,iteration):
         selection = RFE(estimator=RandomForestClassifier()).fit(X,y)
-        selected_features = np .array( columns )[ selection . get_support () ]
-        print(" Features selected by RFE from random forest :{}".format(selected_features) )        print ("")    def select_fetures_RFE_lasso( X,y,columns,iteration):
+        selected_features=np.array(columns)[selection.get_support()]
+        print(" Features selected by RFE from random forest :{}".format(selected_features))    def select_fetures_RFE_lasso( X,y,columns,iteration):
         clf = LassoCV().fit(X, y)
         importance = np.abs(clf.coef_)
         print("importance")
