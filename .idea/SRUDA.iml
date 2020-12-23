@@ -4,8 +4,11 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/data/Criteo_Conversion_Search" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/data/balanced_csv" />
+      <excludeFolder url="file://$MODULE_DIR$/data/criteo" />
+      <excludeFolder url="file://$MODULE_DIR$/notebooks/.ipynb_checkpoints" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.8 (SRUDA)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Remote Python 3.6.9 (sftp://ubuntu@150.254.156.157:40077/usr/bin/python3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

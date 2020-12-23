@@ -131,4 +131,5 @@ dmypy.json
 test_*
 
 .idea/
-data/Criteo_Conversion_Search
+data/criteo/
+data/balanced_csv/
