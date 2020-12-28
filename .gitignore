@@ -134,3 +134,6 @@ test_*
 data/criteo/
 data/balanced_csv/
 data/balanced_csv_test/
+examples/
+graphs/
+notebooks/

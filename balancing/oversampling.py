@@ -1,6 +1,6 @@
 from imblearn.over_sampling import RandomOverSampler, ADASYN, SMOTE, BorderlineSMOTE
 
-from utilities import resample_and_write_to_csv
+from balancing.utilities import resample_and_write_to_csv
 
 
 def random_over_sampler_variations(X, y):

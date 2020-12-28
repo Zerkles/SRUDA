@@ -13,9 +13,9 @@ header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_time
 
 path_data_dir = os.path.dirname(os.path.abspath(__file__))
 path_data_original_criteo = path_data_dir + '/criteo/CriteoSearchData'
-categorized_criteo_filename = 'criteo/CriteoSearchDataCategorized.csv'
+categorized_criteo_filename = '../data/criteo/CriteoSearchDataCategorized.csv'
 path_categorized_criteo = path_data_dir + '/' + categorized_criteo_filename
-labelEncoderDict_filename = "criteo/LabelEncoderDict.pickle"
+labelEncoderDict_filename = "../data/criteo/LabelEncoderDict.pickle"
 
 
 def fun(x):
