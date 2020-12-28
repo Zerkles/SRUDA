@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+*.csv
+test_*
+
+.idea/
+data/criteo/
+data/balanced_csv/
+data/balanced_csv_test/
+examples/
+graphs/
+notebooks/
