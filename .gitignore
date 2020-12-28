@@ -132,5 +132,5 @@ test_*
 
 .idea/
 data/*.csv
-data/*.pickle
-data/criteo.CriteoDataSearch
+data/criteo/*.pickle
+data/criteo/CriteoSearchData
