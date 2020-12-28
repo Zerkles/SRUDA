@@ -1,41 +1,54 @@
-def global_cs(X, y):
+from utilities import resample_and_write_to_csv_multiclass
+
+
+def global_cs_variations(X, y):
     from multi_imbalance.resampling.global_cs import GlobalCS
 
-    global_cs_obj = GlobalCS()
+    obj = GlobalCS
+    print(obj)
+    print(obj.fit_resample(X,y))
+    resample_and_write_to_csv_multiclass(obj, X, y, "GlobalCS" + str(obj.get_params()))
 
-    return global_cs_obj.fit_resample(X, y)
 
-
-def mdo(X, y):
+def mdo_variations(X, y):
     from multi_imbalance.resampling.mdo import MDO
 
-    mdo_obj = MDO()
+    obj = MDO()
+    resample_and_write_to_csv_multiclass(obj, X, y, "MDO" + str(obj.get_params()))
 
-    return mdo_obj.fit_resample(X, y)
 
-
-def soup(X, y):
+def soup_variations(X, y):
     from multi_imbalance.resampling.soup import SOUP
 
-    soup_obj = SOUP(maj_int_min={
+    obj = SOUP(maj_int_min={
         'maj': y,  # indices of majority classes
         'min': y  # indices of minority classes
     })
 
-    return soup_obj.fit_resample(X, y)
+    resample_and_write_to_csv_multiclass(obj, X, y, "SOUP" + str(obj.get_params()))
 
 
-def spider3(X, y):
+def spider3_variations(X, y):
     from multi_imbalance.resampling.spider import SPIDER3
 
-    spider_obj = SPIDER3(k=5)
+    obj = SPIDER3(k=5)
+    resample_and_write_to_csv_multiclass(obj, X, y, "SPIDER3" + str(obj.get_params()))
 
-    return spider_obj.fit_resample(X, y)
 
-
-def static_smote(X, y):
+def static_smote_variations(X, y):
     from multi_imbalance.resampling.static_smote import StaticSMOTE
 
-    static_smote_obj = StaticSMOTE()
+    obj = StaticSMOTE()
+    resample_and_write_to_csv_multiclass(obj, X, y, "StaticSMOTE")  # it has no parameters to set
 
-    return static_smote_obj.fit_transform(X, y)
+
+def balance_all_multiclass(X, y, cores_count):
+    import warnings
+    warnings.filterwarnings("ignore")
+    print("Multi-imbalanced methods comparsion:")
+
+    global_cs_variations(X, y)
+    mdo_variations(X, y)
+    soup_variations(X, y)
+    # spider3_variations(X, y)
+    static_smote_variations(X, y)

@@ -1,85 +1,67 @@
 from collections import Counter
 
+from imblearn.under_sampling import ClusterCentroids, RandomUnderSampler, NearMiss, TomekLinks, EditedNearestNeighbours, \
+    RepeatedEditedNearestNeighbours, AllKNN, CondensedNearestNeighbour, OneSidedSelection, NeighbourhoodCleaningRule
+import numpy as np
 
-def cluster_centroids(X, y, cores_count):
-    from imblearn.under_sampling import ClusterCentroids
-    cc = ClusterCentroids(random_state=0, n_jobs=cores_count)
-    X_resampled, y_resampled = cc.fit_resample(X, y)
-    return X_resampled, y_resampled
+from utilities import resample_and_write_to_csv
 
 
-def random_under_sampler(X, y):
-    from imblearn.under_sampling import RandomUnderSampler
-    rus = RandomUnderSampler(random_state=0)
-    X_resampled, y_resampled = rus.fit_resample(X, y)
-    return X_resampled, y_resampled
+def cluster_centroids_variations(X, y, cores_count):
+    obj = ClusterCentroids(random_state=0, n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "ClusterCentroids" + str(obj.get_params()))
+
+
+def random_under_sampler_variations(X, y):
+    obj = RandomUnderSampler(random_state=0)
+    X_resampled, y_resampled = resample_and_write_to_csv(obj, X, y, "RandomOverSampler" + str(obj.get_params()))
 
     print("   with replacement:")
-    import numpy as np
-    print(np.vstack([tuple(row) for row in X_resampled]).shape)
+    # print(np.vstack([tuple(row) for row in X_resampled]).shape)
 
-    rus = RandomUnderSampler(random_state=0, replacement=True)
-    X_resampled, y_resampled = rus.fit_resample(X, y)
-    print(np.vstack(np.unique([tuple(row) for row in X_resampled], axis=0)).shape)
-    return X_resampled, y_resampled
+    obj = RandomUnderSampler(random_state=0, replacement=True)
+    # X_resampled, y_resampled = resample_and_write_to_csv(obj, X, y, "RandomOverSampler" + str(obj.get_params()))
+    # print(np.vstack(np.unique([tuple(row) for row in X_resampled], axis=0)).shape)
 
 
-def near_miss(X, y, cores_count, version: int):
-    from imblearn.under_sampling import NearMiss
-    nm = NearMiss(version=version, n_jobs=cores_count)
-    X_resampled, y_resampled = nm.fit_resample(X, y)
-    return X_resampled, y_resampled
+def near_miss_variations(X, y, cores_count):
+    obj = NearMiss(version=1, n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "NearMiss" + str(obj.get_params()))
 
 
-def tomek_links(X, y, cores_count, sampling_strategy: str):
-    from imblearn.under_sampling import TomekLinks
-    tl = TomekLinks(sampling_strategy=sampling_strategy, n_jobs=cores_count)
-    X_resampled, y_resampled = tl.fit_resample(X, y)
-    return X_resampled, y_resampled
+def tomek_links_variations(X, y, cores_count):
+    obj = TomekLinks(sampling_strategy='auto', n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "TomekLinks" + str(obj.get_params()))
 
 
-def edited_nearest_neighbours(X, y, cores_count, kind_sel: str):
-    sorted(Counter(y).items())
-
-    from imblearn.under_sampling import EditedNearestNeighbours
-    enn = EditedNearestNeighbours(kind_sel=kind_sel, n_jobs=cores_count)
-    X_resampled, y_resampled = enn.fit_resample(X, y)
-    return X_resampled, y_resampled
+def edited_nearest_neighbours_variations(X, y, cores_count):
+    obj = EditedNearestNeighbours(kind_sel='all', n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "EditedNearestNeighbours" + str(obj.get_params()))
 
 
-def repeated_edited_nearest_neighbours(X, y, cores_count):
-    from imblearn.under_sampling import RepeatedEditedNearestNeighbours
-    renn = RepeatedEditedNearestNeighbours(n_jobs=cores_count)
-    X_resampled, y_resampled = renn.fit_resample(X, y)
-    return X_resampled, y_resampled
+def repeated_edited_nearest_neighbours_variations(X, y, cores_count):
+    obj = RepeatedEditedNearestNeighbours(n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "RepeatedEditedNearestNeighbours" + str(obj.get_params()))
 
 
-def allknn(X, y, cores_count):
-    from imblearn.under_sampling import AllKNN
-    allknn = AllKNN(n_jobs=cores_count)
-    X_resampled, y_resampled = allknn.fit_resample(X, y)
-    return X_resampled, y_resampled
+def allknn_variations(X, y, cores_count):
+    obj = AllKNN(n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "AllKNN" + str(obj.get_params()))
 
 
-def condensed_nearest_neighbours(X, y, cores_count):
-    from imblearn.under_sampling import CondensedNearestNeighbour
-    cnn = CondensedNearestNeighbour(random_state=0, n_jobs=cores_count)
-    X_resampled, y_resampled = cnn.fit_resample(X, y)
-    return X_resampled, y_resampled
+def condensed_nearest_neighbours_variations(X, y, cores_count):
+    obj = CondensedNearestNeighbour(random_state=0, n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "CondensedNearestNeighbours" + str(obj.get_params()))
 
 
-def one_sided_selection(X, y, cores_count):
-    from imblearn.under_sampling import OneSidedSelection
-    oss = OneSidedSelection(random_state=0, n_jobs=cores_count)
-    X_resampled, y_resampled = oss.fit_resample(X, y, )
-    return X_resampled, y_resampled
+def one_sided_selection_variations(X, y, cores_count):
+    obj = OneSidedSelection(random_state=0, n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "OneSidedSelection" + str(obj.get_params()))
 
 
-def neighbourhood_cleaning_rule(X, y, cores_count):
-    from imblearn.under_sampling import NeighbourhoodCleaningRule
-    ncr = NeighbourhoodCleaningRule(n_jobs=cores_count)
-    X_resampled, y_resampled = ncr.fit_resample(X, y)
-    return X_resampled, y_resampled
+def neighbourhood_cleaning_rule_variations(X, y, cores_count):
+    obj = NeighbourhoodCleaningRule(n_jobs=cores_count)
+    resample_and_write_to_csv(obj, X, y, "NeighbourhoodCleaningRule" + str(obj.get_params()))
 
 
 def instance_hardness_threshold(X, y, cores_count):
@@ -90,3 +72,20 @@ def instance_hardness_threshold(X, y, cores_count):
                                         solver='lbfgs', multi_class='auto'), n_jobs=cores_count)
     X_resampled, y_resampled = iht.fit_resample(X, y)
     return X_resampled, y_resampled
+
+
+def balance_all_undersampling(X, y, cores_count):
+    print("Undersampling methods balancing:")
+    # cluster_centroids_variations(X, y, cores_count)
+    random_under_sampler_variations(X, y)
+    near_miss_variations(X, y, cores_count)
+    tomek_links_variations(X, y, cores_count)
+    edited_nearest_neighbours_variations(X, y, cores_count)
+    repeated_edited_nearest_neighbours_variations(X, y, cores_count)
+    allknn_variations(X, y, cores_count)
+    # condensed_nearest_neighbours_variations(X, y, cores_count)
+    one_sided_selection_variations(X, y, cores_count)
+    neighbourhood_cleaning_rule_variations(X, y, cores_count)
+
+    # balance_to_csv(X, y, score_original, instance_hardness_threshold, "InstanceHardnessThreshold")
+    # TODO: tu coś się wywala

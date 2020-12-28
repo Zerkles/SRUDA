@@ -38,7 +38,7 @@ def hex_to_float64(data: pd.DataFrame):
             data[col].apply(lambda x: int(x, 16) >> 64)
 
 
-def get_data(rows_count=-1):  # from raw data
+def get_pure_data(rows_count=-1):  # from raw data
     if rows_count != -1:
         data = pd.read_csv(
             filepath_or_buffer=path_data_original_criteo,
@@ -89,7 +89,7 @@ def get_categorized_data(rows_count: int = -1) -> pd.DataFrame:
 def label_data():
     from sklearn.preprocessing import LabelEncoder
 
-    df = get_data()
+    df = get_pure_data()
 
     label_encoder_dict = {'product_age_group': LabelEncoder(),
                           'device_type': LabelEncoder(),
