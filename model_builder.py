@@ -72,10 +72,14 @@ def teach_model(model_name: str, X: (np.ndarray, np.ndarray), y: (List[int], Lis
         model = XGBClassifier()
     elif model_name == 'log_reg':
         returning = True
-        model = LogisticRegression(random_state=0, solver='sag', max_iter=10.000.000)
+        model = LogisticRegression(random_state=0, solver='sag', max_iter=10000000)
     elif model_name == 'tree':
         returning = True
         model = tree.DecisionTreeClassifier()
+    elif model_name == 'cat':
+        returning = True
+        model = None
+
 
 
 

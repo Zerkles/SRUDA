@@ -132,3 +132,5 @@ dmypy.json
 *.tsv
 *.bat
 test*
+.idea/
+catboost_info/

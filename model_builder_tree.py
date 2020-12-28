@@ -7,8 +7,8 @@ import pandas as pd
 
 
 # open file with balanced and unbalanced data
-#data = pd.read_csv('data_100k.csv', sep='\t')
-data = pd.read_csv('whole_formated.csv', sep='\t')
+data = pd.read_csv('data_100k.csv', sep='\t')
+# data = pd.read_csv('whole_formated.csv', sep='\t')
 print(data.columns)
 #X = data.loc[:, data.columns != ['Sales', 'SalesAmountInEuro',
 #                                 'time_delay_for_conversion']].to_numpy()
