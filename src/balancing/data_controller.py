@@ -12,7 +12,7 @@ header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_time
           'product_id', 'product_title', 'partner_id', 'user_id']
 
 # path_data_dir = str(os.getcwd() + '/data')
-path_data_dir = '../../data'
+path_data_dir = '././data'
 categorized_criteo_filename = 'CriteoSearchDataCategorized.csv'
 path_data_original_criteo = path_data_dir + '/criteo/' + 'CriteoSearchData'
 path_categorized_criteo = path_data_dir + '/criteo/' + categorized_criteo_filename

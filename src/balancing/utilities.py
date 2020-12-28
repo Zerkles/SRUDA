@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from src.balancing.data_controller import path_data_dir
 import pandas as pd
 
-path_balanced_csv = path_data_dir + "/balanced_csv_test"
+path_balanced_csv = path_data_dir + "/balanced_csv"
 
 
 def train_and_score(X, y, cores_count):
@@ -29,7 +29,7 @@ def resample_and_write_to_csv(obj, X, y, name):
 
     write_df = X_resampled
     write_df["Sales"] = y_resampled
-    write_df.to_csv(path_balanced_csv + "/" + name + ".csv")
+    write_df.to_csv(path_balanced_csv + "/" + "dd" + ".csv")
     print("Balanced:", name)
 
     return X_resampled, y_resampled

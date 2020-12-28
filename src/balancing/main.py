@@ -13,14 +13,14 @@ if __name__ == '__main__':
     data = data_controller.get_categorized_data(1000000)
     # data = data_controller.get_pure_data(100)
 
-    X_original = data[header[3:]]
+    X_original = data[list(data.columns)[1:]]
     y_original = data['Sales']
 
     print("Classes size:")
     print(sorted(Counter(y_original).items()), "\n")
 
     balance_all_undersampling(X_original, y_original, cores_count)
-    balance_all_oversampling(X_original, y_original, cores_count)
+    #balance_all_oversampling(X_original, y_original, cores_count)
     # balance_all_multiclass(X_original, y_original, cores_count)
 
     print("No balancing:")

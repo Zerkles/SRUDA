@@ -5,11 +5,10 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 import pickle
 import datetime
-
 from src.balancing import data_controller
 
 columns = ["Sale", "SalesAmountInEuro", "time_delay_for_conversion", "click_timestamp", "nb_clicks_1week",
-           "product_price", "product_age_group", "device_type,audience_id", "product_gender", "product_brand",
+           "product_price", "product_age_group", "device_type","audience_id", "product_gender", "product_brand",
            "prod_category1", "prod_category2", "prod_category3", "prod_category4", "prod_category5", "prod_category6",
            "prod_category7", "product_country", "product_id", "product_title", "partner_id", "user_id"]
 
@@ -53,8 +52,8 @@ class PreProcessing:
         chunksize = round(self.file_length * chunk_fraction) + 1
         return pd.read_csv(file_path, chunksize=chunksize, delimiter="\t", dtype=str)
 
-    def numpy_to_csv(self, matrix):
-        np.savetxt("numpy.csv", matrix, delimiter=",", fmt='%s')
+    def numpy_to_csv(self, matrix,file_name):
+        np.savetxt(file_name, matrix, delimiter=",", fmt='%s')
 
     def csv_to_numpy(self, path):
         data = np.load(path)
@@ -62,14 +61,14 @@ class PreProcessing:
 
     def get_X_and_Y(self, matrix):
 
-        matrix = np.delete(np.delete(matrix, 0, 0), 0, 1)
-        X = matrix[:, list(range(3, 22))]
+        matrix_new = np.delete(np.delete(matrix, 0, 0), 0, 1)
+        X = matrix_new[:, list(range(3, 23))]
         # time_stamp_column = X[:, 0]
         # time_stamp_column = [datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S') for date_time_str in
         #                      time_stamp_column]
         # time_stamp_column = [date_time_str.timestamp() for date_time_str in time_stamp_column]
         # X[:, 0] = time_stamp_column
-        Y = matrix[:, 0]
+        Y = matrix_new[:, 0]
         Y = [int(y == 'True') for y in Y]
         Y = np.array(Y)
         Y = Y.astype(float)
@@ -83,6 +82,19 @@ class PreProcessing:
 
         return data
 
+    def matrix_features(self,features,matrix):
+        array_of_index=[1]
+        for feature in features:
+            if feature in columns:
+                value_index = columns.index(feature)
+                array_of_index.append(value_index+1) #because of headers  
+        matrix_features=matrix[:,array_of_index]  
+        self.numpy_to_csv(matrix_features,"matrix_features.csv")
+        return matrix_features
+        
+       
+            
+        
 
 features = Features()
 test = PreProcessing()
@@ -90,7 +102,9 @@ analysis = Analysis()
 ##labelEncoders = pickle.load(open("E:\inz\criteo\criteo\lablencoder.pickle","rb"))
 
 # test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
+matrix=test.load_data(data_controller.path_categorized_criteo,0.0001)
+X, Y =test.get_X_and_Y(matrix)
+features_selected=Features.select_fetures_RFE_RandomForest(X, Y, columns[3:], 100000)
+print(test.matrix_features(features_selected,matrix))
 
-X, Y = test.get_X_and_Y(test.load_data(data_controller.path_categorized_criteo, 0.01))
-Features.select_fetures_RFE_RandomForest(X, Y, columns[3:], 100000)
 # test.numpy_to_csv(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv", 0.01))
