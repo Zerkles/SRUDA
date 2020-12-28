@@ -33,15 +33,20 @@ class Analysis:
         #print(matrix)
         print("saleamountineuro")
         print(self.count_unique(matrix[2]))
-        
+        print(selif.calculate_median(matrix[2]))
+        print(selif.calculate_mean(matrix[2]))
         print("time_delay_for_conversion")
         print(self.count_unique(matrix[3]))
-        
+        print(selif.calculate_median(matrix[3]))
+        print(selif.calculate_mean(matrix[3]))
         print("nb_lcicks_1week")
         print(self.count_unique(matrix[5]))
-        
+        print(selif.calculate_median(matrix[5]))
+        print(selif.calculate_mean(matrix[5]))
         print("product_price")
         print(self.count_unique(matrix[6]))
+        print(selif.calculate_median(matrix[6]))
+        print(selif.calculate_mean(matrix[6]))
 
     def displot(self,matrix,columns):
         matrix=np.delete(matrix,0,0)

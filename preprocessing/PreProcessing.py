@@ -40,21 +40,20 @@ class PreProcessing:
                         print(x)
                     lines [x] = file . readline (). rstrip("\n") . split (",")
         print (" Data loading finished . Loaded rows")
-        #print(type(lines))
-        #print (lines_to_read)
-        #print(lines[0])
-        #print(lines[1])
-        #lines.tofile("test",' ',"'%s'")
-        #file = open("file2.txt", "w+")
-        #content = str(lines) 
-        #file.write(content) 
-        #file.close()
+        print(lines)
         return lines
 
     def load_data_by_chunks ( self , file_path , chunk_fraction ):
         chunksize = round ( self . file_length * chunk_fraction ) + 1
-        return pd . read_csv ( file_path , chunksize = chunksize , delimiter ="\t", dtype =
-        str )
+        return pd . read_csv ( file_path , chunksize = chunksize , delimiter ="\t", dtype = str )
+
+    def numpy_to_csv(self,matrix):
+        np.savetxt("numpy.csv", matrix, delimiter=",", fmt='%s')
+        
+    def csv_to_numpy(self,path):
+        data = np.load(path)
+        return data
+
     def get_X_and_Y(self, matrix):
         
         matrix=np.delete(np.delete(matrix,0,0),0,1)
@@ -71,12 +70,6 @@ class PreProcessing:
 
     def preprocess_data (self, data):
         print (" Data preprocessing started ... ")
-
-            
-       ## encoder = np.LabelEncoder()
-        ##for x in range (3 , np.size(data ,1)):
-          ## data [: , x] = encoder.fit_transform( data [: , x ])
-
         print (" Data preprocessing finished . Loaded dataset of {0} rows and {1} columns ".format (data.shape [0],data.shape[1]))
         data.tofile("test",' ',"'%s'")
 
@@ -89,5 +82,7 @@ analysis=Analysis()
 
 #test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
 
-X,Y=test.get_X_and_Y(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",0.001))
-Features.select_fetures_RFE_RandomForest(X,Y,columns[3:22],100000)
+#X,Y=test.get_X_and_Y(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",0.01))
+#Features.select_fetures_RFE_RandomForest(X,Y,columns[3:22],100000)
+test.numpy_to_csv(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",0.01))
+
