@@ -1,7 +1,7 @@
 from imblearn.under_sampling import ClusterCentroids, RandomUnderSampler, NearMiss, TomekLinks, EditedNearestNeighbours, \
     RepeatedEditedNearestNeighbours, AllKNN, CondensedNearestNeighbour, OneSidedSelection, NeighbourhoodCleaningRule
 
-from balancing.utilities import resample_and_write_to_csv
+from src.balancing.utilities import resample_and_write_to_csv
 
 
 def cluster_centroids_variations(X, y, cores_count):

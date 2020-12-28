@@ -1,13 +1,12 @@
 from collections import Counter
 
-from balancing.multi_imbalanced import balance_all_multiclass
-from balancing.data_controller import header
-from balancing.oversampling import balance_all_oversampling
-from balancing.undersampling import balance_all_undersampling
-from balancing.utilities import train_and_score, \
+from src.balancing.data_controller import header
+from src.balancing.oversampling import balance_all_oversampling
+from src.balancing.undersampling import balance_all_undersampling
+from src.balancing.utilities import train_and_score, \
     train_and_compare_all
 
-from balancing import data_controller
+from src.balancing import data_controller
 
 if __name__ == '__main__':
     cores_count = -1  # -1 == all cores

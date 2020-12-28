@@ -11,11 +11,12 @@ header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_time
           'product_category4', 'product_category5', 'product_category6', 'product_category7', 'product_country',
           'product_id', 'product_title', 'partner_id', 'user_id']
 
-path_data_dir = os.path.dirname(os.path.abspath(__file__))
-path_data_original_criteo = path_data_dir + '/criteo/CriteoSearchData'
-categorized_criteo_filename = '../data/criteo/CriteoSearchDataCategorized.csv'
-path_categorized_criteo = path_data_dir + '/' + categorized_criteo_filename
-labelEncoderDict_filename = "../data/criteo/LabelEncoderDict.pickle"
+# path_data_dir = str(os.getcwd() + '/data')
+path_data_dir = '../../data'
+categorized_criteo_filename = 'CriteoSearchDataCategorized.csv'
+path_data_original_criteo = path_data_dir + '/criteo/' + 'CriteoSearchData'
+path_categorized_criteo = path_data_dir + '/criteo/' + categorized_criteo_filename
+path_labelEncoderDict = path_data_dir + '/criteo/' + "LabelEncoderDict.pickle"
 
 
 def fun(x):
@@ -120,11 +121,11 @@ def label_data():
         df[key] = label_encoder_dict[key].transform(df[key])
 
     df.to_csv(categorized_criteo_filename)
-    pickle.dump(label_encoder_dict, open(labelEncoderDict_filename, "wb"))
+    pickle.dump(label_encoder_dict, open(path_labelEncoderDict, "wb"))
 
 
 def delabel_data(df: pd.DataFrame) -> pd.DataFrame:
-    label_encoder_dict = pickle.load(open(labelEncoderDict_filename, "rb"))
+    label_encoder_dict = pickle.load(open(path_labelEncoderDict, "rb"))
 
     for key in label_encoder_dict.keys():
         print("Delabeling:", key)

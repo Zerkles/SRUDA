@@ -1,4 +1,3 @@
-
 import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.model_selection import cross_val_score
@@ -14,30 +13,28 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFE
 
 
-
-
 class Features:
     """description of class"""
 
-    def select_fetures_select_from_model_LR( X,y,columns,iteration):
-        selection = SelectFromModel(estimator=LogisticRegression(max_iter=iteration)).fit(X,y)
-        selected_features=np.array(columns)[selection.get_support()]
+    def select_fetures_select_from_model_LR(X, y, columns, iteration):
+        selection = SelectFromModel(estimator=LogisticRegression(max_iter=iteration)).fit(X, y)
+        selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by SelectFromModel from logistic regression :{}".format(selected_features))
         return selected_features
 
-    def select_fetures_select_from_model_linearsvc( X,y,columns,iteration):
-        selection = SelectFromModel(estimator=LinearSVC(max_iter=iteration)).fit(X,y)
-        selected_features=np.array(columns)[selection.get_support()]
+    def select_fetures_select_from_model_linearsvc(X, y, columns, iteration):
+        selection = SelectFromModel(estimator=LinearSVC(max_iter=iteration)).fit(X, y)
+        selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by SelectFromModel from Linear SVC :{}".format(selected_features))
         return selected_features
 
-    def select_fetures_select_from_model_RandomForest( X,y,columns,iteration):
-        selection = SelectFromModel(estimator=RandomForestClassifier()).fit(X,y)
-        selected_features=np.array(columns)[selection.get_support()]
+    def select_fetures_select_from_model_RandomForest(X, y, columns, iteration):
+        selection = SelectFromModel(estimator=RandomForestClassifier()).fit(X, y)
+        selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by SelectFromModel from random forest :{}".format(selected_features))
         return selected_features
 
-    def select_fetures_select_from_model_lasso( X,y,columns,iteration):
+    def select_fetures_select_from_model_lasso(X, y, columns, iteration):
         clf = LassoCV().fit(X, y)
         importance = np.abs(clf.coef_)
         print("importance")
@@ -53,25 +50,25 @@ class Features:
         n_features = sfm.transform(X).shape[1]
         return name_features
 
-    def select_fetures_RFE_LR( X,y,columns,iteration):
-        selection = RFE(estimator=LogisticRegression()).fit(X,y)
-        selected_features=np.array(columns)[selection.get_support()]
+    def select_fetures_RFE_LR(X, y, columns, iteration):
+        selection = RFE(estimator=LogisticRegression()).fit(X, y)
+        selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by RFE from logistic regression :{}".format(selected_features))
         return selected_features
 
-    def select_fetures_RFE_linearsvc( X,y,columns,iteration):
-        selection = RFE(estimator=LinearSVC(max_iter=iteration)).fit(X,y)
-        selected_features=np.array(columns)[selection.get_support()]
+    def select_fetures_RFE_linearsvc(X, y, columns, iteration):
+        selection = RFE(estimator=LinearSVC(max_iter=iteration)).fit(X, y)
+        selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by RFE from Linear SVC :{}".format(selected_features))
         return selected_features
 
-    def select_fetures_RFE_RandomForest( X,y,columns,iteration):
-        selection = RFE(estimator=RandomForestClassifier()).fit(X,y)
-        selected_features=np.array(columns)[selection.get_support()]
+    def select_fetures_RFE_RandomForest(X, y, columns, iteration):
+        selection = RFE(estimator=RandomForestClassifier()).fit(X, y)
+        selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by RFE from random forest :{}".format(selected_features))
         return selected_features
 
-    def select_fetures_RFE_lasso( X,y,columns,iteration):
+    def select_fetures_RFE_lasso(X, y, columns, iteration):
         clf = LassoCV().fit(X, y)
         importance = np.abs(clf.coef_)
         print("importance")
@@ -86,5 +83,3 @@ class Features:
         X_transform = sfm.transform(X)
         n_features = sfm.transform(X).shape[1]
         return name_features
-
-

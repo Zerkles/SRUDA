@@ -3,7 +3,7 @@ import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-from balancing.data_controller import path_data_dir
+from src.balancing.data_controller import path_data_dir
 import pandas as pd
 
 path_balanced_csv = path_data_dir + "/balanced_csv_test"

@@ -1,4 +1,4 @@
-from balancing.utilities import resample_and_write_to_csv_multiclass
+from src.balancing.utilities import resample_and_write_to_csv_multiclass
 
 
 def global_cs_variations(X, y):
