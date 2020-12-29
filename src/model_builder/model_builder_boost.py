@@ -9,11 +9,8 @@ import pandas as pd
 
 
 # open file with balanced and unbalanced data
-#data = pd.read_csv('data_100k.csv', sep='\t')
-data = pd.read_csv('whole_formated.csv', sep='\t')
+data = pd.read_csv('/home/kwitnoncy/Documents/politechnika/SRUDA/data/criteo/criteo_40k.csv', sep='\t')
 print(list(data.columns))
-#X = data.loc[:, data.columns != ['Sales', 'SalesAmountInEuro',
-#                                 'time_delay_for_conversion']].to_numpy()
 X = data.loc[:, ['click_timestamp', 'nb_clicks_1week', 'product_price',
      'product_age_group', 'device_type', 'audience_id', 'product_gender',
      'product_brand', 'prod_cat_1', 'prod_cat_3', 'prod_cat_4', 'prod_cat_5',
@@ -27,11 +24,11 @@ y = y.to_numpy()
 # do some stuff with data. Maybe check what parameters are relevant
 X[np.isnan(X)] = 0
 
-#print("pre balanced:", sorted(Counter(y_test).items()))
-#print("pre balanced:", sorted(Counter(y_train).items()))
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=40)
+print("pre balanced:", sorted(Counter(y_test).items()))
+print("pre balanced:", sorted(Counter(y_train).items()))
 
-#X_train, X_test = scale(X_train), scale(X_test)
-"""
+X_train, X_test = scale(X_train), scale(X_test)
 # learn model
 seed = 7
 test_size = 0.33
@@ -47,6 +44,5 @@ y_pred = model.predict(X_test)
 predictions = [round(value) for value in y_pred]
 
 accuracy = accuracy_score(y_test, predictions)
-print("Accuracy: %.2f%%" % (accuracy * 100.0))
-"""
+print("Accuracy: %f" % (accuracy))
 

@@ -1,0 +1,47 @@
+import click
+import time
+from src.model_builder.model_builder import ModelBuilder
+
+
+def do_preprocessing():
+    pass
+
+
+@click.command()
+@click.option('-m', '--model', 'model', required=True, multiple=True,
+              type=click.Choice(['xgb', 'cat', 'reg', 'tree'], case_sensitive=False), help='Models to train')
+@click.option('-p', '--pre-processing', 'preprocessing_types', required=False,
+              multiple=True, help='Pre-processing algorithms to use')
+@click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
+@click.option('-o', '--out', 'result_directory', required=False, multiple=False,
+              help='Directory to save logs and results', default='results_'+str(int(time.time())))
+def main(model, preprocessing_types, in_file, result_directory):
+    print(model, preprocessing_types, in_file, result_directory)
+    # preprocessing
+    # balancing
+    # model building
+
+    for name in model:
+        builder = ModelBuilder(model_name=name, filename=in_file, separator='\t', labels_header='Sales')
+        results, pred, real = builder.get_result()
+        print(results)
+        print(len(pred), type(pred))
+        print(len(real), type(real))
+    d = {
+        "filename": "data_set_1",
+        "time": 24.3,
+        "TP": 100,
+        "TN": 100,
+        "FP": 10,
+        "FN": 10,
+        "score": (0, 2, 4, 4)
+    }
+
+    # ---------------------
+
+    return 0
+
+
+if __name__ == "__main__":
+    main()
+
