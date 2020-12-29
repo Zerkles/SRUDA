@@ -1,11 +1,22 @@
 import sklearn
+import click
+import time
 
 
 def do_preprocessing():
     pass
 
 
-def main():
+@click.command()
+@click.option('-m', '--model', 'model', required=True, multiple=True,
+              type=click.Choice(['xgb', 'cat', 'reg', 'tree'], case_sensitive=False), help='Models to train')
+@click.option('-p', '--pre-processing', 'preprocessing_types', required=False,
+              multiple=True, help='Pre-processing algorithms to use')
+@click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
+@click.option('-o', '--out', 'result_directory', required=False, multiple=False,
+              help='Directory to save logs and results', default='results_'+str(int(time.time())))
+def main(model, preprocessing_types, in_file, result_directory):
+    print(model, preprocessing_types, in_file, result_directory)
     guwno = None    # TODO:DUPA
     # preprocessing
     # preprocessing w sumie jest tylko raz, więc jak Julek zbalansuje i zapisze do plików to tylko ścieżki plików są nam potrzebne
@@ -39,9 +50,6 @@ def main():
 
 
 if __name__ == "__main__":
-    for i in range(69):
-        print("dupa")
-
     main()
 
 #     SCENARIUSZ 1 - GÓWNO BEZ BALANSOWANIA
@@ -62,3 +70,5 @@ if __name__ == "__main__":
 #     lulek balansuje
 #     wszystko se robimy
 #     happy ending
+
+
