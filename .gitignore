@@ -131,9 +131,5 @@ dmypy.json
 test_*
 
 .idea/
-data/criteo/
-data/balanced_csv/
-data/balanced_csv_test/
-examples/
-graphs/
-notebooks/
+*.pickle
+data/criteo/CriteoSearchData

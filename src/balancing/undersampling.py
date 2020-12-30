@@ -1,7 +1,7 @@
 from imblearn.under_sampling import ClusterCentroids, RandomUnderSampler, NearMiss, TomekLinks, EditedNearestNeighbours, \
     RepeatedEditedNearestNeighbours, AllKNN, CondensedNearestNeighbour, OneSidedSelection, NeighbourhoodCleaningRule
 
-from balancing.utilities import resample_and_write_to_csv
+from src.balancing.utilities import resample_and_write_to_csv
 
 
 def cluster_centroids_variations(X, y, cores_count):
@@ -11,14 +11,10 @@ def cluster_centroids_variations(X, y, cores_count):
 
 def random_under_sampler_variations(X, y):
     obj = RandomUnderSampler(random_state=0)
-    X_resampled, y_resampled = resample_and_write_to_csv(obj, X, y, "RandomOverSampler" + str(obj.get_params()))
-
-    print("   with replacement:")
-    # print(np.vstack([tuple(row) for row in X_resampled]).shape)
+    resample_and_write_to_csv(obj, X, y, "RandomOverSampler" + str(obj.get_params()))
 
     obj = RandomUnderSampler(random_state=0, replacement=True)
-    # X_resampled, y_resampled = resample_and_write_to_csv(obj, X, y, "RandomOverSampler" + str(obj.get_params()))
-    # print(np.vstack(np.unique([tuple(row) for row in X_resampled], axis=0)).shape)
+    resample_and_write_to_csv(obj, X, y, "RandomOverSampler" + str(obj.get_params()))
 
 
 def near_miss_variations(X, y, cores_count):
