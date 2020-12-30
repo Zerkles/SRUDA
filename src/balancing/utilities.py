@@ -14,8 +14,8 @@ def train_and_score(X, y, cores_count):
     clf = RandomForestClassifier(max_depth=2, random_state=0, n_jobs=cores_count)
     try:
         clf.fit(X_train, y_train)
-    except:
-        print("Train error")
+    except Exception as e:
+        print("Train error:", e)
 
     return clf.score(X_test, y_test)
 
@@ -27,26 +27,8 @@ def percent_change(original, value):
 def resample_and_write_to_csv(obj, X, y, name):
     X_resampled, y_resampled = obj.fit_resample(X, y)
 
-    write_df = X_resampled
-    write_df["Sales"] = y_resampled
-    write_df.to_csv(path_balanced_csv + "/" + name + ".csv")
-    print("Balanced:", name)
-
-    return X_resampled, y_resampled
-
-
-def resample_and_write_to_csv_multiclass(obj, X, y, name):
-    from multi_imbalance.utils.plot import plot_visual_comparision_datasets
-    import matplotlib.pyplot as plt
-    X_resampled, y_resampled = obj(X, y)
-
-    plot_visual_comparision_datasets(X, y, X_resampled, y_resampled, 'CriteoCS', 'Resampled CriteoCS with ' + name)
-    plt.show()
-    # plt.savefig("/graphs"+name+".png")
-
-    write_df = X_resampled
-    write_df["Sales"] = y_resampled
-    write_df.to_csv(path_balanced_csv + "/" + name + ".csv")
+    write_df = X_resampled.append(y_resampled)
+    write_df.to_csv(path_balanced_csv + "/" + name + ".csv", index=False)
     print("Balanced:", name)
 
     return X_resampled, y_resampled

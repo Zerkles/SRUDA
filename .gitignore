@@ -131,6 +131,5 @@ dmypy.json
 test_*
 
 .idea/
-data/*.csv
-data/criteo/*.pickle
+*.pickle
 data/criteo/CriteoSearchData

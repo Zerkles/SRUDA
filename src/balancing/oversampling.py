@@ -39,8 +39,8 @@ def balance_all_oversampling(X, y, cores_count):
     print("Oversampling methods comparsion:")
 
     random_over_sampler_variations(X, y)
-    smote_variations(X, y, cores_count)
-    adasyn_variations(X, y, cores_count)
-    borderline_smote_variations(X, y, cores_count)
+    # smote_variations(X, y, cores_count)
+    # adasyn_variations(X, y, cores_count)
+    # borderline_smote_variations(X, y, cores_count)
 
     # describe_balancing(X, y, score_original, smotenc, "SMOTENC")    # TODO: tu coś się wywala
