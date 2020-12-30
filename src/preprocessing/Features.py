@@ -24,7 +24,7 @@ class Features:
         return selected_features
 
     def select_features_select_from_model_linearsvc(X, y, columns, iteration):
-        selection = SelectFromModel(estimator=LinearSVC(penalty="l1")).fit(X, y)
+        selection = SelectFromModel(estimator=LinearSVC(max_iter=iteration)).fit(X, y)
         selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by SelectFromModel from Linear SVC :{}".format(selected_features))
         return selected_features
@@ -52,7 +52,7 @@ class Features:
         return name_features
 
     def select_features_RFE_LR(X, y, columns, iteration):
-        selection = RFE(estimator=LogisticRegression(max)).fit(X, y)
+        selection = RFE(estimator=LogisticRegression(max_iter=iteration)).fit(X, y)
         selected_features = np.array(columns)[selection.get_support()]
         print(" Features selected by RFE from logistic regression :{}".format(selected_features))
         return selected_features

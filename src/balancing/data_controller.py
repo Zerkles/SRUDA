@@ -13,7 +13,8 @@ header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_time
 
 # path_data_dir = str(os.getcwd() + '/data')
 path_data_dir = '././data'
-categorized_criteo_filename = 'matrix_features.csv'
+categorized_criteo_filename = 'CriteoSearchDataCategorized.csv'
+features_criteo = 'matrix_feature.csv'
 path_data_original_criteo = path_data_dir + '/criteo/' + 'CriteoSearchData'
 path_categorized_criteo = path_data_dir + '/criteo/' + categorized_criteo_filename
 path_labelEncoderDict = path_data_dir + '/criteo/' + "LabelEncoderDict.pickle"

@@ -90,8 +90,34 @@ class PreProcessing:
         matrix_features=matrix[:,array_of_index]  
         self.numpy_to_csv(matrix_features,data_controller.path_data_dir+"/criteo/matrix_features.csv")
         return matrix_features
+
+    def choose_feature(self,list_of_metods,X,Y,columns,iteration):
+        features=[]
         
-       
+        for metod in list_of_metods:
+            print(metod)
+            switcher={
+                "sfm_lr": lambda : features.append(Features.select_features_select_from_model_LR(X, Y, columns, iteration).tolist()),
+                "sfm_linearsvc":lambda:features.append(Features.select_features_select_from_model_linearsvc(X, Y, columns, iteration).tolist()),
+                "sfm_rfc":lambda:features.append(Features.select_features_select_from_model_RandomForest(X, Y, columns, iteration).tolist()),
+                "sfm_lasso":lambda:features.append(Features.select_features_select_from_model_lasso(X, Y, columns, iteration).tolist()),#last sfm
+
+                "rle_lr":lambda:features.append(Features.select_features_RFE_LR(X, Y, columns, iteration).tolist()),
+                "rle_linearsvc":lambda:features.append(Features.select_features_RFE_linearsvc(X, Y, columns, iteration).tolist()),
+                "rle_rfc":lambda:features.append(Features.select_features_RFE_RandomForest(X, Y, columns, iteration).tolist()),
+                "rle_lasso":lambda:features.append(Features.select_features_RFE_lasso(X, Y, columns, iteration).tolist()),#last rle
+
+                "permutation_lr":lambda:features.append(Features.select_features_permutation_LR(X, Y, columns, iteration).tolist()),
+                "permutation_linearsvc":lambda:features.append(Features.select_features_permutation_linearsvc(X, Y, columns, iteration).tolist()),
+                "permutation_rfc":lambda:features.append(Features.select_features_permutation_RandomForest(X, Y, columns, iteration).tolist()),
+                "permutation_lasso":lambda:features.append(Features.select_features_permutation_lasso(X, Y, columns, iteration).tolist())
+
+             }.get(metod,lambda: None)()
+        flatten = [val for sublist in features for val in sublist]#flatten list
+        
+
+        features=list(dict.fromkeys(flatten))# delete duplicates
+        return features       
             
         
 
@@ -103,7 +129,9 @@ analysis = Analysis()
 # test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
 matrix=test.load_data(data_controller.path_categorized_criteo,0.001)
 X, Y =test.get_X_and_Y(matrix)
-features_selected=Features.select_features_select_from_model_permutation(X, Y, columns[3:], 10000)
-print(test.matrix_features(features_selected,matrix))
+#features_selected=Features.select_features_select_from_model_LR(X, Y, columns[3:], 10000)
+#print(test.matrix_features(features_selected,matrix))
+
+print(test.choose_feature(["sfm_lr","sfm_linearsvc","permutation_rfc"],X,Y,columns[3:],1000))
 
 # test.numpy_to_csv(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv", 0.01))
