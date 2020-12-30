@@ -20,7 +20,7 @@ if __name__ == '__main__':
     print(sorted(Counter(y_original).items()), "\n")
 
     balance_all_undersampling(X_original, y_original, cores_count)
-    #balance_all_oversampling(X_original, y_original, cores_count)
+    balance_all_oversampling(X_original, y_original, cores_count)
     # balance_all_multiclass(X_original, y_original, cores_count)
 
     print("No balancing:")

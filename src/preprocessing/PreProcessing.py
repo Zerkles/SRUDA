@@ -45,7 +45,7 @@ class PreProcessing:
                     print(x)
                 lines[x] = file.readline().rstrip("\n").split(",")
         print(" Data loading finished . Loaded rows")
-        print(lines)
+        #print(lines)
         return lines
 
     def load_data_by_chunks(self, file_path, chunk_fraction):
@@ -60,18 +60,17 @@ class PreProcessing:
         return data
 
     def get_X_and_Y(self, matrix):
-
-        matrix_new = np.delete(np.delete(matrix, 0, 0), 0, 1)
-        X = matrix_new[:, list(range(3, 23))]
+        print(matrix)
+        matrix = np.delete(np.delete(matrix, 0, 0), 0, 1)
+        print(matrix)
+        X = matrix[:, list(range(3, 23))]
         # time_stamp_column = X[:, 0]
         # time_stamp_column = [datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S') for date_time_str in
         #                      time_stamp_column]
         # time_stamp_column = [date_time_str.timestamp() for date_time_str in time_stamp_column]
         # X[:, 0] = time_stamp_column
-        Y = matrix_new[:, 0]
-        Y = [int(y == 'True') for y in Y]
-        Y = np.array(Y)
-        Y = Y.astype(float)
+        print(matrix)
+        Y = matrix[:, 0]
         return X, Y
 
     def preprocess_data(self, data):
@@ -89,7 +88,7 @@ class PreProcessing:
                 value_index = columns.index(feature)
                 array_of_index.append(value_index+1) #because of headers  
         matrix_features=matrix[:,array_of_index]  
-        self.numpy_to_csv(matrix_features,"matrix_features.csv")
+        self.numpy_to_csv(matrix_features,data_controller.path_data_dir+"/criteo/matrix_features.csv")
         return matrix_features
         
        
@@ -102,9 +101,9 @@ analysis = Analysis()
 ##labelEncoders = pickle.load(open("E:\inz\criteo\criteo\lablencoder.pickle","rb"))
 
 # test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
-matrix=test.load_data(data_controller.path_categorized_criteo,0.0001)
+matrix=test.load_data(data_controller.path_categorized_criteo,0.001)
 X, Y =test.get_X_and_Y(matrix)
-features_selected=Features.select_fetures_RFE_RandomForest(X, Y, columns[3:], 100000)
+features_selected=Features.select_features_select_from_model_permutation(X, Y, columns[3:], 10000)
 print(test.matrix_features(features_selected,matrix))
 
 # test.numpy_to_csv(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv", 0.01))

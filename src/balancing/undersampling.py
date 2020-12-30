@@ -80,7 +80,7 @@ def balance_all_undersampling(X, y, cores_count):
     #edited_nearest_neighbours_variations(X, y, cores_count)
     #repeated_edited_nearest_neighbours_variations(X, y, cores_count)
     #allknn_variations(X, y, cores_count)
-    # condensed_nearest_neighbours_variations(X, y, cores_count)
+   # condensed_nearest_neighbours_variations(X, y, cores_count)
     #one_sided_selection_variations(X, y, cores_count)
     #neighbourhood_cleaning_rule_variations(X, y, cores_count)
 
