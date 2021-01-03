@@ -6,7 +6,7 @@ from sklearn.metrics import roc_auc_score, roc_curve
 
 
 class ScoringAlgs:
-    def __init__(self, data_dict) -> None:
+    def __init__(self, results, preds, real) -> None:
         # """keys: algorithm name, values: Y_test values for algorithm"""
         self.correct_labels = {}
 
@@ -28,7 +28,7 @@ class ScoringAlgs:
 
         self.model_names = []
 
-        self.init_from_dict(data_dict)
+        self.init_from_dict(results, preds, real)
         super().__init__()
 
 
@@ -76,7 +76,9 @@ class ScoringAlgs:
                 sns.heatmap(data=self.conf_matrices[str(value)], annot=conf_matrices_annots[str(value)], fmt='',
                             ax=axes[row][col], cmap='Blues', xticklabels=False, yticklabels=False)
                 plt.setp(axes[row][col], xlabel='Predicted labels', ylabel='True labels')
-        plt.savefig('aaaaaa.jpeg')
+
+        # dopóki w tym result nie mam jeszcze zapisanego sposobu balansowania ani preprocessingu, to zapisuję tylko tutaj
+        plt.savefig('confusion_matrices.jpeg')
         plt.close()
 
     def plot_roc_auc(self):
@@ -94,11 +96,11 @@ class ScoringAlgs:
         plt.xlabel('False positive rate')
         plt.ylabel('True positive rate')
         plt.legend()
-        plt.savefig('bbbb.jpeg')
+        # dopóki w tym result nie mam jeszcze zapisanego sposobu balansowania ani preprocessingu, to zapisuję tylko tutaj
+        plt.savefig('ROCs.jpeg')
         plt.close()
 
-    def init_from_dict(self, dict_data, add_ns_probs=False):
-        results, preds, real = self.unpack_models_dict(dict_input=dict_data)
+    def init_from_dict(self, results, preds, real, add_ns_probs=False):
         self.model_names = list(map(lambda x: x['model'], results))
         truth_table_keys = ['TP', 'FN', 'TN', 'FP']
         for x in self.model_names:
@@ -110,8 +112,4 @@ class ScoringAlgs:
         #     self.correct_labels['no_skill'] = real[0]
         #     self.predicted_labels['no_skill'] = [0 for _ in range(len(preds[0]))]
 
-    def unpack_models_dict(self, dict_input):
-        results = dict_input['results']
-        preds = dict_input['pred']
-        real = dict_input['real']
-        return results, preds, real
+
