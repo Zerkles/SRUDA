@@ -36,7 +36,7 @@ class ScoringAlgs:
         # """Plots confusion matrix from values provided from Piotrek's module"""
 
         # prepare annotations
-        block_labels = ['True Pos', 'False Pos', 'True Neg', 'False Neg']
+        block_labels = ['True Neg', 'False Pos', 'False Neg', 'True Pos']
         conf_matrices_annots = {}
         for key in self.model_names:
             percent_values = ["{:.2%}".format(x / np.sum(self.conf_matrices[key])) for x in self.conf_matrices[key]]
@@ -102,7 +102,7 @@ class ScoringAlgs:
 
     def init_from_dict(self, results, preds, real, add_ns_probs=False):
         self.model_names = list(map(lambda x: x['model'], results))
-        truth_table_keys = ['TP', 'FN', 'TN', 'FP']
+        truth_table_keys = ['TN', 'FP', 'FN', 'TP']
         for x in self.model_names:
             self.correct_labels[x] = real[self.model_names.index(x)]
             self.predicted_labels[x] = preds[self.model_names.index(x)]
