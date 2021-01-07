@@ -16,6 +16,14 @@ def do_preprocessing():
 @click.option('-o', '--out', 'result_directory', required=False, multiple=False,
               help='Directory to save logs and results', default='results_'+str(int(time.time())))
 def main(model, preprocessing_types, in_file, result_directory):
+    """
+    Bachelor Thesis project.\n
+    SRUDA - System for Rating Unbalanced Data Algorithms.\n
+    Example run:\n
+    ./main.py -m xgb -i data.csv\n
+    ./main.py -m xgb -m tree -i data2.csv\n
+    ./main.py -m reg -i data.csv -o some_results.csv\n
+    """
     print(model, preprocessing_types, in_file, result_directory)
     # preprocessing
     # balancing

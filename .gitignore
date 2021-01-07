@@ -134,3 +134,4 @@ dmypy.json
 test*
 .idea/
 catboost_info/
+scp_file.sh

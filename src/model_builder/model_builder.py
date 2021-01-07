@@ -4,6 +4,7 @@ from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn import tree
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 import numpy as np
 import pandas as pd
 from typing import List
@@ -25,7 +26,6 @@ class ModelBuilder:
         self.labels = labels
 
     def get_result(self) -> (dict, List[int], List[int]):
-        # TODO repair return
         error, x, y, = self.prepare_data()
         if error:
             print('Something went wrong', error)
@@ -108,27 +108,15 @@ class ModelBuilder:
         result['mean_score'] = model.score(x[1], y[1])
         result['predict_proba'] = model.predict_proba(x[1])
 
-        result['TP'], result['FN'], result['TN'], result['FP'] = ModelBuilder.create_confusion_table(
+        result['TN'], result['FP'], result['FN'], result['TP'] = ModelBuilder.create_confusion_table(
             predicted=predicted,
             real=y[1])
 
-        return result, x[1], predicted
+        return result, predicted, y[1]
 
     @staticmethod
     def create_confusion_table(predicted: List[int], real: List[int]) -> (int, int, int, int):
-        tp = tn = fp = fn = 0
-        for i in range(len(predicted)):
-            if real[i] == 1:
-                if predicted[i] == real[i]:
-                    tp += 1
-                else:
-                    fn += 1
-            else:
-                if predicted[i] == real[i]:
-                    tn += 1
-                else:
-                    fp += 1
-        return tp, fn, tn, fp
+        return confusion_matrix(real, predicted).ravel()
 
     @staticmethod
     def split(x: np.ndarray, y: List[int]) -> (np.ndarray, np.ndarray, List[int], List[int]):
