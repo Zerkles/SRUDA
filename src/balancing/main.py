@@ -1,30 +1,27 @@
-from collections import Counter
-
 import pandas as pd
-from src.balancing.data_controller import header
+
 from src.balancing.multiclass import balance_all_multiclass
-from src.balancing.utilities import train_and_score, \
-    train_and_compare_all
+from src.balancing.oversampling import balance_all_oversampling
+from src.balancing.undersampling import balance_all_undersampling
+from src.balancing.utilities import train_and_score, train_all_from_csv, feature_optimizer
 
 from src.balancing import data_controller
 
 if __name__ == '__main__':
-    cores_count = -1  # -1 == all cores
-    data = data_controller.get_categorized_data(50000)
+    data = data_controller.get_categorized_data(1000)
     # data = data_controller.get_converted_data(100)
 
-    X_original = data[header[3:]]
+    X_original = data[list(data.columns)[3:]]
     y_original = pd.DataFrame(data['Sales'], columns=["Sales"])
-    y_original.rename(columns={"": "Sales"}, inplace=True)
 
     print("Classes size:")
-    print(sorted(Counter(y_original).items()), "\n")
+    print("1:", len(y_original.loc[y_original["Sales"] == 1]), "0:",
+          y_original.shape[0] - len(y_original.loc[y_original["Sales"] == 1]))
 
-    # balance_all_undersampling(X_original, y_original, cores_count)
-    # balance_all_oversampling(X_original, y_original, cores_count)
+    balance_all_undersampling(X_original, y_original)
+    balance_all_oversampling(X_original, y_original)
     balance_all_multiclass(X_original, y_original)
 
     print("No balancing:")
-    score_original = train_and_score(X_original, y_original, cores_count)
-    print("Score:", score_original, "\n")
-    train_and_compare_all(score_original, cores_count)
+    train_and_score(X_original, y_original)
+    train_all_from_csv()

@@ -1,17 +1,14 @@
-from src.balancing.utilities import resample_and_write_to_csv, path_balanced_csv
+from multi_imbalance.utils.plot import plot_visual_comparision_datasets
+
+from src.balancing.utilities import resample_and_write_to_csv, path_balanced_csv, \
+    check_if_new_categorical_features_generated
+import matplotlib.pyplot as plt
 
 
 def global_cs_variations(X, y):
     from multi_imbalance.resampling.global_cs import GlobalCS
 
     obj = GlobalCS()
-    # print(obj)
-    # print(obj.fit_resample(X, y))
-    resample_and_write_to_csv(obj, X, y, "GlobalCS" + str(obj.get_params()))
-
-    obj = GlobalCS(shuffle=False)
-    # print(obj)
-    # print(obj.fit_resample(X, y))
     resample_and_write_to_csv(obj, X, y, "GlobalCS" + str(obj.get_params()))
 
 
@@ -44,28 +41,34 @@ def static_smote_variations(X, y):
     from multi_imbalance.resampling.static_smote import StaticSMOTE
     # it has no parameters to set and no fit_resample()
 
-    X.append(y)
-    X_resampled, y_resampled = StaticSMOTE().fit_transform(X, y)
+    obj = StaticSMOTE()
 
-    write_df = X_resampled.append(y_resampled)
-    write_df.to_csv(path_balanced_csv + "/StaticSMOTE.csv")
-    print("Balanced:", "StaticSMOTE")
+    X['Sales'] = y
+    X_resampled, y_resampled = obj.fit_transform(X, y)
+    check_if_new_categorical_features_generated(X, X_resampled)
+
+    write_df = X_resampled
+    write_df["Sales"] = y_resampled
+    write_df.to_csv(path_balanced_csv + "/" + "StaticSMOTE" + ".csv", index=False)
+    print("Balanced:", "StaticSMOTE", '\n')
+    # TODO: Coś się z danymi odpierdala i złe csv wychodzą
 
     return X_resampled, y_resampled
 
 
+def draw_plot(X, y, X_resampled, y_resampled, name):
+    plot_visual_comparision_datasets(X, y, X_resampled, y_resampled, 'CriteoCS', 'Resampled CriteoCS with ' + name)
+    plt.show()
+    # plt.savefig("/graphs"+name+".png")
+
+
 def balance_all_multiclass(X, y):
-    import warnings
-    warnings.filterwarnings("ignore")
+    # import warnings
+    # warnings.filterwarnings("ignore")
     print("Multi-imbalanced methods comparsion:")
 
     global_cs_variations(X, y)
-    mdo_variations(X, y)
+    # mdo_variations(X, y) # UWAGA! Generuje nowe dane dla cech kategorycznych!
     soup_variations(X, y)
-    spider3_variations(X, y)
-    # static_smote_variations(X, y) Nie działa to i nie wiem czemu
-    # TODO: Coś się z danymi odpierdala i złe csv wychodzą
-
-    # plot_visual_comparision_datasets(X, y, X_resampled, y_resampled, 'CriteoCS', 'Resampled CriteoCS with ' + name)
-    # plt.show()
-    # # plt.savefig("/graphs"+name+".png")
+    # spider3_variations(X, y) # UWAGA! Generuje nowe dane dla cech kategorycznych!
+    # static_smote_variations(X, y)  # Nie działa to i nie wiem czemu
