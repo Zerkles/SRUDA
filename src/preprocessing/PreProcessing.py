@@ -91,6 +91,14 @@ class PreProcessing:
         self.numpy_to_csv(matrix_features,data_controller.path_data_dir+"/criteo/matrix_features.csv")
         return matrix_features
 
+    def split_data_to_test_and_balance_set(self,matrix,test_size,balance_size): #splits dataset to testset and set to balance
+        test_set=matrix[-test_size:]
+        imbalance_set=matrix[:balance_size]
+        self.numpy_to_csv(test_set,data_controller.path_data_dir+"/criteo/test_set.csv")
+        self.numpy_to_csv(imbalance_set,data_controller.path_data_dir+"/criteo/imbalance_set.csv")
+        return test_set, imbalance_set
+
+
     def choose_feature(self,list_of_metods,X,Y,columns,iteration):
         features=[]
         
@@ -127,11 +135,12 @@ analysis = Analysis()
 ##labelEncoders = pickle.load(open("E:\inz\criteo\criteo\lablencoder.pickle","rb"))
 
 # test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
-matrix=test.load_data(data_controller.path_categorized_criteo,0.001)
+matrix=test.load_data(data_controller.path_categorized_criteo,0.01)
 X, Y =test.get_X_and_Y(matrix)
 #features_selected=Features.select_features_select_from_model_LR(X, Y, columns[3:], 10000)
 #print(test.matrix_features(features_selected,matrix))
 
-print(test.choose_feature(["sfm_lr","sfm_linearsvc","permutation_rfc"],X,Y,columns[3:],1000))
+features_choosen=test.choose_feature(["sfm_lr","sfm_linearsvc","permutation_rfc"],X,Y,columns[3:],1000)
+test.split_data_to_test_and_balance_set(test.matrix_features(features_choosen,matrix),40000,100000)
 
 # test.numpy_to_csv(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv", 0.01))
