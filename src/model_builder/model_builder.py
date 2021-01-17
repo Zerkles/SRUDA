@@ -112,6 +112,8 @@ class ModelBuilder:
         result['balanced']['test_time'] = time.time() - time_start
         result['balanced']['mean_score'] = model.score(x[1], y[1])
         result['balanced']['predict_proba'] = model.predict_proba(x[1])
+        result['balanced']['predicted'] = predicted_balanced
+        result['balanced']['real'] = y[1]
 
         result['balanced']['TN'], result['balanced']['FP'], result['balanced']['FN'], result['balanced']['TP'] =\
             ModelBuilder.create_confusion_table(
@@ -125,13 +127,15 @@ class ModelBuilder:
         result['unbalanced']['test_time'] = time.time() - time_start
         result['unbalanced']['mean_score'] = model.score(x[2], y[2])
         result['unbalanced']['predict_proba'] = model.predict_proba(x[2])
+        result['unbalanced']['predicted'] = predicted_unbalanced
+        result['unbalanced']['real'] = y[2]
 
         result['unbalanced']['TN'], result['unbalanced']['FP'], result['unbalanced']['FN'], result['unbalanced']['TP'] \
             = ModelBuilder.create_confusion_table(
                 predicted=predicted_unbalanced,
                 real=y[2])
 
-        return result, predicted_balanced, y[1], predicted_unbalanced, y[2]
+        return result
 
     @staticmethod
     def create_confusion_table(predicted: List[int], real: List[int]) -> (int, int, int, int):
