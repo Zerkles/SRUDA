@@ -86,16 +86,35 @@ class ModelBuilder:
         model = None
 
         if self.model_name == 'xgb':
-            model = XGBClassifier()
+            model = XGBClassifier(gamma=9,
+                                  learning_rate=0.003,
+                                  max_delta_step=1,
+                                  max_depth=6,
+                                  min_child_weight=7,
+                                  n_estimators=220,
+                                  subsample=0.8)
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
             model = CatBoostClassifier(iterations=2, depth=2, learning_rate=1, loss_function='Logloss', verbose=True)
             result['model'] = 'cat'
         elif self.model_name == 'reg':
-            model = LogisticRegression(random_state=0, solver='sag', max_iter=10000000)
+            model = LogisticRegression(solver='newton-cg',
+                                       penalty='none',
+                                       max_iter=190,
+                                       intercept_scaling=1.0,
+                                       fit_intercept=False,
+                                       dual=False,
+                                       class_weight='balanced',
+                                       C=0.0)
             result['model'] = 'reg'
         elif self.model_name == 'tree':
-            model = tree.DecisionTreeClassifier()
+            model = tree.DecisionTreeClassifier(criterion='gini',
+                                                max_depth=None,
+                                                max_features='auto',
+                                                min_samples_split=0.1,
+                                                min_weight_fraction_leaf=0.1,
+                                                random_state=0,
+                                                splitter='random')
             result['model'] = 'tree'
 
         if not model:
