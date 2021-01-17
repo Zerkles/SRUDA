@@ -129,9 +129,13 @@ dmypy.json
 .pyre/
 .idea
 *.csv
-test_*
 
 .idea/
 data/*.csv
 data/criteo/*.pickle
 data/criteo/CriteoSearchData
+
+#uningnored testsets
+!data/test_sets/**
+!data/test_sets/test_set.csv
+!data/test_sets/imbalanced_set.csv
