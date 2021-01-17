@@ -2,11 +2,11 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-from sklearn.metrics import roc_auc_score, roc_curve
+from sklearn.metrics import roc_auc_score, roc_curve, balanced_accuracy_score, accuracy_score, recall_score, f1_score
 
 
 class ScoringAlgs:
-    def __init__(self, results, preds, real) -> None:
+    def __init__(self, results) -> None:
         # """keys: algorithm name, values: Y_test values for algorithm"""
         self.correct_labels = {}
 
@@ -28,11 +28,10 @@ class ScoringAlgs:
 
         self.model_names = []
 
-        self.init_from_dict(results, preds, real)
+        self.init_from_dict(results)
         super().__init__()
 
-
-    def plot_conf_matrices(self):
+    def plot_conf_matrices(self, filename='confusion_matrices'):
         # """Plots confusion matrix from values provided from Piotrek's module"""
 
         # prepare annotations
@@ -78,10 +77,10 @@ class ScoringAlgs:
                 plt.setp(axes[row][col], xlabel='Predicted labels', ylabel='True labels')
 
         # dopóki w tym result nie mam jeszcze zapisanego sposobu balansowania ani preprocessingu, to zapisuję tylko tutaj
-        plt.savefig('confusion_matrices.jpeg')
+        plt.savefig(filename+'.jpeg')
         plt.close()
 
-    def plot_roc_auc(self):
+    def calculate_roc_auc(self):
         # prepare data
         line_styles = ['-', '--', '-.', ':']
         model_roc_curves = []
@@ -89,27 +88,52 @@ class ScoringAlgs:
             self.auc_scores[model_name] = roc_auc_score(self.correct_labels[model_name], self.probas[model_name])
             model_fpr, model_tpr, _ = roc_curve(self.correct_labels[model_name], self.probas[model_name])
             model_roc_curves.append({'model': model_name, 'fpr': model_fpr, 'tpr': model_tpr})
+        self.roc_curves = model_roc_curves
 
-        # plot
-        for x in model_roc_curves:
-            plt.plot(x['fpr'], x['tpr'], label=x['model'], linestyle=line_styles[model_roc_curves.index(x)])
+    def plot_roc_auc(self, filename = 'ROCs'):
+        self.calculate_roc_auc()
+        line_styles = ['-', '--', '-.', ':']
+        for x in self.roc_curves:
+            plt.plot(x['fpr'], x['tpr'], label=x['model'], linestyle=line_styles[self.roc_curves.index(x)])
         plt.xlabel('False positive rate')
         plt.ylabel('True positive rate')
         plt.legend()
         # dopóki w tym result nie mam jeszcze zapisanego sposobu balansowania ani preprocessingu, to zapisuję tylko tutaj
-        plt.savefig('ROCs.jpeg')
+        plt.savefig(filename+'.jpeg')
         plt.close()
 
-    def init_from_dict(self, results, preds, real, add_ns_probs=False):
-        self.model_names = list(map(lambda x: x['model'], results))
+    def set_model_names(self, new_model_names):
+        self.model_names = new_model_names
+
+    def init_from_dict(self, result_dict):
+        self.set_model_names(result_dict.keys())
         truth_table_keys = ['TN', 'FP', 'FN', 'TP']
-        for x in self.model_names:
-            self.correct_labels[x] = real[self.model_names.index(x)]
-            self.predicted_labels[x] = preds[self.model_names.index(x)]
-            self.probas[x] = results[self.model_names.index(x)]['predict_proba'][:, 1]
-            self.conf_matrices[x] = [results[self.model_names.index(x)][key] for key in truth_table_keys]
+
+        for model_name in self.model_names:
+            self.correct_labels[model_name] = result_dict[model_name]['results']['real']
+            self.predicted_labels[model_name] = result_dict[model_name]['results']['predicted']
+            self.probas[model_name] = result_dict[model_name]['results']['predict_proba'][:, 1]
+            self.conf_matrices[model_name] = [result_dict[model_name]['results'][key] for key in truth_table_keys]
         # if add_ns_probs:
         #     self.correct_labels['no_skill'] = real[0]
         #     self.predicted_labels['no_skill'] = [0 for _ in range(len(preds[0]))]
 
+    def calculate_other_measures(self, y_pred=None, y_true=None, balanced_acc_score=True, acc=True, recall=True,
+                                 f1=True):
+        resultDict = {}
+        if balanced_acc_score:
+            resultDict['balanced_acc_score'] = self.calculate_score(balanced_accuracy_score)
+        if acc:
+            resultDict['accuracy'] = self.calculate_score(accuracy_score)
+        if recall:
+            resultDict['recall'] = self.calculate_score(recall_score)
+        if f1:
+            resultDict['f1'] = self.calculate_score(f1_score)
+        return resultDict
 
+    def calculate_score(self, func):
+        models_scores_dict = {}
+        for model_name in self.model_names:
+            models_scores_dict[model_name] = func(y_true=self.correct_labels[model_name],
+                                                  y_pred=self.predicted_labels[model_name])
+        return models_scores_dict
