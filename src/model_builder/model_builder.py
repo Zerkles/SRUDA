@@ -27,7 +27,7 @@ class ModelBuilder:
         self.labels_header = labels_header
         self.labels = labels
 
-    def get_result(self) -> (dict, List[int], List[int]):
+    def get_result(self) -> dict:
         error, x, y, x_un, y_un = self.prepare_data()
         if error:
             print('Something went wrong', error)
@@ -81,25 +81,21 @@ class ModelBuilder:
     def teach_model(self,
                     x: (np.ndarray, np.ndarray, np.ndarray),
                     y: (List[int], List[int], List[int])
-                    ) -> (dict, List[int], List[int]):
+                    ) -> dict:
         result = {}
         model = None
 
         if self.model_name == 'xgb':
             model = XGBClassifier()
-            result['model'] = 'xgb'
         elif self.model_name == 'cat':
             model = CatBoostClassifier(iterations=2, depth=2, learning_rate=1, loss_function='Logloss', verbose=True)
-            result['model'] = 'cat'
         elif self.model_name == 'reg':
             model = LogisticRegression(random_state=0, solver='sag', max_iter=10000000)
-            result['model'] = 'reg'
         elif self.model_name == 'tree':
             model = tree.DecisionTreeClassifier()
-            result['model'] = 'tree'
 
         if not model:
-            return {}, [], []
+            return {}
 
         time_start = time.time()
         model.fit(x[0], y[0])
@@ -134,7 +130,7 @@ class ModelBuilder:
             = ModelBuilder.create_confusion_table(
                 predicted=predicted_unbalanced,
                 real=y[2])
-
+        print(type(result))
         return result
 
     @staticmethod
