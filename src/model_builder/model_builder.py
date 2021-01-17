@@ -95,7 +95,15 @@ class ModelBuilder:
                                   subsample=0.8)
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
-            model = CatBoostClassifier(iterations=2, depth=2, learning_rate=1, loss_function='Logloss', verbose=True)
+            model = CatBoostClassifier(
+                loss_function='Logloss',
+                scale_pos_weight=28.0,
+                reg_lambda=4.5,
+                n_estimators=115,
+                max_depth=7,
+                learning_rate=0.015,
+                border_count=120
+            )
             result['model'] = 'cat'
         elif self.model_name == 'reg':
             model = LogisticRegression(solver='newton-cg',
