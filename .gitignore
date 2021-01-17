@@ -131,12 +131,13 @@ dmypy.json
 *.csv
 test_*
 
+
 .idea/
 data/*.csv
 data/criteo/*.pickle
 data/criteo/CriteoSearchData
 
-#uningnored testsets
-!data/test_sets/**
+#uningnored feature_selected_data
+!data/feature_selected_data/**
 !data/feature_selected_data/test_set.csv
 !data/feature_selected_data/imbalanced_set.csv
