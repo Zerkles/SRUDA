@@ -29,12 +29,17 @@ def main(model, preprocessing_types, in_file, result_directory):
     # balancing
     # model building
 
+    unbalanced_name = 'data/criteo/criteo_40k.csv'
+
     for name in model:
-        builder = ModelBuilder(model_name=name, filename=in_file, separator='\t', labels_header='Sales')
-        results, pred, real = builder.get_result()
+        builder = ModelBuilder(model_name=name,
+                               filename=in_file,
+                               unbalanced_filename=unbalanced_name,
+                               separator='\t',
+                               labels_header='Sales'
+                               )
+        results, pred_balanced, real_balanced, pred_unbalanced, real_unbalanced = builder.get_result()
         print(results)
-        print(len(pred), type(pred))
-        print(len(real), type(real))
     d = {
         "filename": "data_set_1",
         "time": 24.3,

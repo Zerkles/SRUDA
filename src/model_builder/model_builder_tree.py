@@ -5,7 +5,7 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 
-data = pd.read_csv('/home/kwitnoncy/Documents/politechnika/whole_formated.csv', sep='\t')
+data = pd.read_csv('../../data/criteo/criteo_40k.csv', sep='\t')
 print(data.columns)
 
 X = data.loc[:, ['click_timestamp', 'nb_clicks_1week', 'product_price',
