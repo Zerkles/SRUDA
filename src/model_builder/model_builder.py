@@ -92,7 +92,11 @@ class ModelBuilder:
                                   max_depth=6,
                                   min_child_weight=7,
                                   n_estimators=220,
-                                  subsample=0.8)
+                                  subsample=0.8,
+                                  verbosity=0,
+                                  booster='gbtree',
+                                  n_jobs=-1,
+                                  use_label_encoder='False')
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
             model = CatBoostClassifier(

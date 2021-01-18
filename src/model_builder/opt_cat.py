@@ -17,6 +17,15 @@ X[np.isnan(X)] = 0
 
 house_dmatrix = xg.DMatrix(data=X, label=y)
 
+base_params = {
+    'n_estimators': np.arange(10, 200, 5),
+    'max_depth': [x for x in range(10)],
+    'learning_rate': np.arange(0.01, 0.1, 0.005),
+    'reg_lambda': np.arange(0.5, 10.0, 0.5),
+    'scale_pos_weight': np.arange(10.0, 100.0, 1.0),
+    'border_count': np.arange(20, 200, 5)
+}
+
 param_random_gb = {
     'n_estimators': np.arange(100, 130, 5),
     'max_depth': [7],
