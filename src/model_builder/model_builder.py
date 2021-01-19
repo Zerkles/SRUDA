@@ -2,7 +2,7 @@
 from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 import numpy as np
@@ -27,7 +27,7 @@ class ModelBuilder:
         self.labels_header = labels_header
         self.labels = labels
 
-    def get_result(self) -> (dict, List[int], List[int]):
+    def get_result(self) -> (dict, List[int], List[int], List[int], List[int]):
         error, x, y, x_un, y_un = self.prepare_data()
         if error:
             print('Something went wrong', error)
@@ -81,7 +81,7 @@ class ModelBuilder:
     def teach_model(self,
                     x: (np.ndarray, np.ndarray, np.ndarray),
                     y: (List[int], List[int], List[int])
-                    ) -> (dict, List[int], List[int]):
+                    ) -> (dict, List[int], List[int], List[int], List[int]):
         result = {}
         model = None
 
@@ -99,15 +99,13 @@ class ModelBuilder:
                                   use_label_encoder='False')
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
-            model = CatBoostClassifier(
-                loss_function='Logloss',
-                scale_pos_weight=28.0,
-                reg_lambda=4.5,
-                n_estimators=115,
-                max_depth=7,
-                learning_rate=0.015,
-                border_count=120
-            )
+            model = CatBoostClassifier(loss_function='Logloss',
+                                       scale_pos_weight=28.0,
+                                       reg_lambda=4.5,
+                                       n_estimators=115,
+                                       max_depth=7,
+                                       learning_rate=0.015,
+                                       border_count=120)
             result['model'] = 'cat'
         elif self.model_name == 'reg':
             model = LogisticRegression(solver='newton-cg',
@@ -120,13 +118,13 @@ class ModelBuilder:
                                        C=0.0)
             result['model'] = 'reg'
         elif self.model_name == 'tree':
-            model = tree.DecisionTreeClassifier(criterion='gini',
-                                                max_depth=None,
-                                                max_features='auto',
-                                                min_samples_split=0.1,
-                                                min_weight_fraction_leaf=0.1,
-                                                random_state=0,
-                                                splitter='random')
+            model = DecisionTreeClassifier(criterion='gini',
+                                           max_depth=None,
+                                           max_features='auto',
+                                           min_samples_split=0.1,
+                                           min_weight_fraction_leaf=0.1,
+                                           random_state=0,
+                                           splitter='random')
             result['model'] = 'tree'
 
         if not model:
@@ -144,10 +142,10 @@ class ModelBuilder:
         result['balanced']['mean_score'] = model.score(x[1], y[1])
         result['balanced']['predict_proba'] = model.predict_proba(x[1])
 
-        result['balanced']['TN'], result['balanced']['FP'], result['balanced']['FN'], result['balanced']['TP'] =\
+        result['balanced']['TN'], result['balanced']['FP'], result['balanced']['FN'], result['balanced']['TP'] = \
             ModelBuilder.create_confusion_table(
-            predicted=predicted_balanced,
-            real=y[1])
+                predicted=predicted_balanced,
+                real=y[1])
 
         # unbalanced data
         time_start = time.time()
@@ -159,8 +157,8 @@ class ModelBuilder:
 
         result['unbalanced']['TN'], result['unbalanced']['FP'], result['unbalanced']['FN'], result['unbalanced']['TP'] \
             = ModelBuilder.create_confusion_table(
-                predicted=predicted_unbalanced,
-                real=y[2])
+            predicted=predicted_unbalanced,
+            real=y[2])
 
         return result, predicted_balanced, y[1], predicted_unbalanced, y[2]
 
