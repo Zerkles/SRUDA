@@ -11,10 +11,10 @@ header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_time
           'product_category4', 'product_category5', 'product_category6', 'product_category7', 'product_country',
           'product_id', 'product_title', 'partner_id', 'user_id']
 
-# path_data_dir = str(os.getcwd() + '/data')
 path_data_dir = '../../data'
 path_data_original_criteo = path_data_dir + '/criteo/CriteoSearchData'
 path_categorized_criteo = path_data_dir + '/criteo/CriteoSearchDataCategorized.csv'
+path_feature_selected = path_data_dir + '/feature_selected/imbalance_set.csv'
 path_labelEncoderDict = path_data_dir + '/criteo/' + "LabelEncoderDict.pickle"
 
 
@@ -82,6 +82,23 @@ def get_categorized_data(rows_count: int = -1) -> pd.DataFrame:
         )
     return pd.read_csv(
         filepath_or_buffer=path_categorized_criteo,
+        sep=',',
+        index_col=False,
+        low_memory=False,
+    )
+
+
+def get_feature_selected_data(rows_count: int = -1) -> pd.DataFrame:
+    if rows_count != -1:
+        return pd.read_csv(
+            filepath_or_buffer=path_feature_selected,
+            nrows=rows_count,
+            sep=',',
+            index_col=False,
+            low_memory=False,
+        )
+    return pd.read_csv(
+        filepath_or_buffer=path_feature_selected,
         sep=',',
         index_col=False,
         low_memory=False,

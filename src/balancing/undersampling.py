@@ -62,9 +62,6 @@ def random_under_sampler_variations(X, y):
     obj = RandomUnderSampler(random_state=0)
     resample_and_write_to_csv(obj, X, y, "RandomUnderSampler" + str(obj.get_params()))
 
-    obj = RandomUnderSampler(random_state=0, replacement=True)
-    resample_and_write_to_csv(obj, X, y, "RandomUnderSampler" + str(obj.get_params()))
-
 
 def tomek_links_variations(X, y):
     obj = TomekLinks(sampling_strategy='auto', n_jobs=-1)
@@ -78,9 +75,9 @@ def balance_all_undersampling(X, y):
     # edited_nearest_neighbours_variations(X, y)
     # repeated_edited_nearest_neighbours_variations(X, y)
     # allknn_variations(X, y)
-    instance_hardness_threshold_variations(X, y)
+    # instance_hardness_threshold_variations(X, y)
     # near_miss_variations(X, y)
     # neighbourhood_cleaning_rule_variations(X, y)
     # one_sided_selection_variations(X, y)
-    # random_under_sampler_variations(X, y)
+    random_under_sampler_variations(X, y)
     # tomek_links_variations(X, y)

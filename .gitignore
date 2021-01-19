@@ -133,3 +133,4 @@ test_*
 .idea/
 *.pickle
 data/criteo/CriteoSearchData
+plots/

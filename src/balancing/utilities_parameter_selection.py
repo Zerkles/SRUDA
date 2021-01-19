@@ -1,0 +1,148 @@
+from imblearn.metrics import geometric_mean_score
+from imblearn.over_sampling import RandomOverSampler, SMOTENC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import recall_score
+from sklearn.model_selection import train_test_split
+
+from src.balancing import data_controller
+import pandas as pd
+import numpy as np
+
+from src.balancing.utilities import resample_and_write_to_csv, split_data_on_x_y, count_classes_size, \
+    get_every_nth_element_of_list
+
+
+def gridsearch_with_graph(resampler_obj, parameters_dist: dict, X, y):
+    import matplotlib.pyplot as plt
+    import itertools
+    # Generate permutations of parameters
+    keys, values = zip(*parameters_dist.items())
+    permutations_dict = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    # print(permutations_dicts)
+
+    print("Parameter ranges:")
+    for key in parameters_dist.keys():
+        print(f"{key}: {min(parameters_dist[key])}-{max(parameters_dist[key])}")
+    print("Iterations:", len(permutations_dict), "\n")
+
+    X = X.values
+    y = y.values.ravel()
+
+    gmean_scoring = []
+    recall_scoring = []
+    for variant in permutations_dict:
+        resampler_obj.set_params(**variant)
+        X_resampled, y_resampled = resampler_obj.fit_resample(X, y)
+
+        X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.3, random_state=0)
+        clf = RandomForestClassifier(max_depth=2, random_state=0, n_jobs=-1)
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+
+        gmean_scoring.append(geometric_mean_score(y_test, y_pred))
+        recall_scoring.append(recall_score(y_test, y_pred))
+        print("Tested for args:", resampler_obj.get_params())
+        # print_metrics(y_test, y_pred)
+
+    # Drawing graph
+    plt.plot(range(0, len(gmean_scoring)), gmean_scoring)
+    plt.title(obj.__str__().title())
+    plt.xlabel("Experiment Number")
+    plt.ylabel('Geometric Mean Score')
+    plt.show()
+    for key in parameters_dist.keys():
+        param_values = []
+        for exp in permutations_dict:
+            param_values.append(exp[key])
+        plt.plot(range(len(param_values)), param_values)
+        plt.xlabel("Experiment Number")
+        plt.ylabel(key)
+
+    # plt.legend(["Geometric Mean Score"]+list(parameters_dist.keys()), loc="upper right")
+    plt.show()
+
+    # Displaying top parameters
+    parameters_count = 10 + 1
+    print("Top parameters:")
+    for i in range(1, parameters_count):
+        value = max(gmean_scoring)
+        index = gmean_scoring.index(value)
+        print(i, "Score", value, "Recall", recall_scoring[index], "for =", permutations_dict[index])
+        gmean_scoring[index] = 0
+    for i in range(1, parameters_count):
+        value = max(recall_scoring)
+        index = recall_scoring.index(value)
+        print(i, "Recall", value, "Score", gmean_scoring[index], "for =", permutations_dict[index])
+        recall_scoring[index] = 0
+
+
+def pipeline_randomized_and_grid_search(X, y):
+    X = X.values
+    y = y.values.ravel()
+
+    max_neighbors_count = 2714
+    print(max_neighbors_count)
+    gmean_scorer = make_scorer(geometric_mean_score)
+
+    resampler_name = 'nearmiss__'
+    resampler = NearMiss(n_jobs=-1)
+    classifier = RandomForestClassifier(max_depth=2, random_state=0, n_jobs=-1)
+    param_dist = {resampler_name + "n_neighbors": list(range(1, max_neighbors_count)),
+                  # resampler_name + "n_neighbors_ver3": list(range(1, max_neighbors_count)),
+                  resampler_name + "version": [1, 2, 3]}
+
+    pipeline = Pipeline([('nearmiss', resampler), ('RandomForestClassifier', classifier)])
+    # print(pipeline.get_params().keys())
+
+    random_search = RandomizedSearchCV(pipeline, n_jobs=-1, param_distributions=param_dist, n_iter=30, cv=5,
+                                       random_state=0, scoring=gmean_scorer)
+    random_search.fit(X, y)
+    print(random_search.best_params_)
+    print(random_search.best_score_)
+
+    grid_search = GridSearchCV(pipeline, n_jobs=-1, param_grid=param_dist, cv=3, scoring=gmean_scorer)
+
+    grid_search.fit(X, y)
+    print(grid_search.best_params_)
+    print(grid_search.best_score_)
+
+
+# if __name__ == "__main__":
+#     from cmath import sqrt
+#
+#     # This is for feature optimization use
+#     data = data_controller.get_categorized_data(100000)
+#
+#     X = data[list(data.columns)[3:]]
+#     y = pd.DataFrame(data['Sales'], columns=["Sales"])
+#
+#     X = X.values
+#     y = y.values.ravel()
+#
+#     obj_list = []
+#     max_n_neighbors = np.count_nonzero(y == 1) - 1
+#     # max_n_neighbors = 2139
+#
+#     square_root_from_samples_count = int(sqrt(y.shape[0]).real)
+#     print("Square root from samples count:", square_root_from_samples_count)
+#
+#     resampler_name = "NearMiss for "  # + str(int(y.count())) + " samples"
+#
+#     percent_step = 0.05
+#     value_dict = {"n_neighbors": list(range(1, max_n_neighbors, int(percent_step * max_n_neighbors))),
+#                   "version": [3],
+#                   "n_neighbors_ver3": list(range(1, max_n_neighbors, int(percent_step * max_n_neighbors)))}
+#     feature_graph_generator(NearMiss(n_jobs=-1), value_dict, resampler_name, X, y)
+
+if __name__ == "__main__":
+    # This is for feature optimization use
+    RANDOM_STATE = 0
+    data = data_controller.get_feature_selected_data(10000)
+    X, y = split_data_on_x_y(data)
+
+    class_size = count_classes_size(y)
+    print("Classes size:", class_size)
+
+    max_n_neighbors = class_size[1] - 1
+    percent_step = 0.05
+
