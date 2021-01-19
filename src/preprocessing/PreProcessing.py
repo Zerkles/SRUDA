@@ -9,8 +9,8 @@ from src.balancing import data_controller
 
 columns = ["Sale", "SalesAmountInEuro", "time_delay_for_conversion", "click_timestamp", "nb_clicks_1week",
            "product_price", "product_age_group", "device_type","audience_id", "product_gender", "product_brand",
-           "prod_category1", "prod_category2", "prod_category3", "prod_category4", "prod_category5", "prod_category6",
-           "prod_category7", "product_country", "product_id", "product_title", "partner_id", "user_id"]
+           "product_category1", "product_category2", "product_category3", "product_category4", "product_category5", "product_category6",
+           "product_category7", "product_country", "product_id", "product_title", "partner_id", "user_id"]
 
 
 class PreProcessing:
@@ -60,9 +60,9 @@ class PreProcessing:
         return data
 
     def get_X_and_Y(self, matrix):
-        print(matrix)
+        
         matrix = np.delete(np.delete(matrix, 0, 0), 0, 1)
-        print(matrix)
+        
         X = matrix[:, list(range(3, 23))]
         # time_stamp_column = X[:, 0]
         # time_stamp_column = [datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S') for date_time_str in
@@ -88,11 +88,14 @@ class PreProcessing:
                 value_index = columns.index(feature)
                 array_of_index.append(value_index+1) #because of headers  
         matrix_features=matrix[:,array_of_index]  
+        print(features)
+        print(matrix_features[0])
         self.numpy_to_csv(matrix_features,data_controller.path_data_dir+"/criteo/matrix_features.csv")
         return matrix_features
 
     def split_data_to_test_and_balance_set(self,matrix,test_size,balance_size): #splits dataset to testset and set to balance
-        test_set=matrix[-test_size:]
+        print(matrix[0,:])
+        test_set=np.vstack((matrix[0],matrix[-test_size:]))
         imbalance_set=matrix[:balance_size]
         self.numpy_to_csv(test_set,data_controller.path_data_dir+"/criteo/test_set.csv")
         self.numpy_to_csv(imbalance_set,data_controller.path_data_dir+"/criteo/imbalance_set.csv")
@@ -135,12 +138,13 @@ analysis = Analysis()
 ##labelEncoders = pickle.load(open("E:\inz\criteo\criteo\lablencoder.pickle","rb"))
 
 # test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
-matrix=test.load_data(data_controller.path_categorized_criteo,0.01)
-X, Y =test.get_X_and_Y(matrix)
+matrix=test.load_data(data_controller.path_categorized_criteo,1)
+#X, Y =test.get_X_and_Y(matrix)
 #features_selected=Features.select_features_select_from_model_LR(X, Y, columns[3:], 10000)
 #print(test.matrix_features(features_selected,matrix))
-
-features_choosen=test.choose_feature(["sfm_lr","sfm_linearsvc","permutation_rfc"],X,Y,columns[3:],1000)
-test.split_data_to_test_and_balance_set(test.matrix_features(features_choosen,matrix),40000,100000)
-
+#features_choosen=test.choose_feature(["sfm_lr","rle_lr","sfm_linearsvc","rle_linearsvc","permutation_rfc","permutation_lasso"],X,Y,columns[3:],10000)
+#print(features_choosen)
+#features_choosen=[ 'click_timestamp', 'nb_clicks_1week', 'product_price', 'audience_id','product_brand', "product_category3", "product_category4","product_category5","product_category6", "product_country","product_id", "partner_id"]
+#test.split_data_to_test_and_balance_set(test.matrix_features(features_choosen,matrix),40000,100000)
+analysis.displot(matrix,[1])
 # test.numpy_to_csv(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv", 0.01))

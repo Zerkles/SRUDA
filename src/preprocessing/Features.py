@@ -97,22 +97,22 @@ class Features:
         return(selected_features)
 
     def select_features_permutation_linearsvc(X, y, columns, iteration):
-        model=LinearSVC(max_iter=iteration).fit(X, y)
+        model=LinearSVC().fit(X, y)
         result = permutation_importance(model, X, y, n_repeats=10,
                                 random_state=42, n_jobs=2)
         sorted_idx = result.importances_mean.argsort()[::-1]
-        print(result.importances_mean)
+        print(result)
         print(sorted_idx)
         selected_features = np.array(columns)[sorted_idx[:8]]
         print(selected_features[:8])
         return(selected_features)
 
     def select_features_permutation_LR(X, y, columns, iteration):
-        model=estimator=LogisticRegression(max_iter=iteration).fit(X, y)
+        model=estimator=LogisticRegression().fit(X, y)
         result = permutation_importance(model, X, y, n_repeats=10,
                                 random_state=42, n_jobs=2)
         sorted_idx = result.importances_mean.argsort()[::-1]
-        print(result.importances_mean)
+        print(result)
         print(sorted_idx)
         selected_features = np.array(columns)[sorted_idx[:8]]
         print(selected_features[:8])
