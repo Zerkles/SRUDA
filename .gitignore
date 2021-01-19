@@ -127,9 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea
 *.csv
 test_*
+
 
 .idea/
 *.pickle
 data/criteo/CriteoSearchData
+
+#uningnored feature_selected_data
+!data/feature_selected_data/**
+!data/feature_selected_data/test_set.csv
+!data/feature_selected_data/imbalanced_set.csv
