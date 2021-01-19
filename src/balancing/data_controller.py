@@ -109,7 +109,6 @@ def label_data():
     from sklearn.preprocessing import LabelEncoder
 
     df = get_pure_data()
-    print("Dataframe loaded!")
 
     label_encoder_dict = {'product_age_group': LabelEncoder(),
                           'device_type': LabelEncoder(),
