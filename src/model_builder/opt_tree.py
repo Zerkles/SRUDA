@@ -1,17 +1,21 @@
+from builtins import set
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from sklearn.tree import DecisionTreeClassifier
 import time
 
-start = time.time()
-data = pd.read_csv('../../data/criteo/balanced.csv', sep=',')
-head = 'user_id,partner_id,nb_clicks_1week,product_price,product_age_group,device_type,audience_id,product_gender,click_timestamp,product_id,product_country,product_brand,product_title,product_category6,product_category5,Sales'.split(',')
+data = pd.read_csv('../../data/balanced_csv/RUS.csv', sep=',')
+head = 'click_timestamp,nb_clicks_1week,product_price,audience_id,product_brand,product_category3,product_category4,product_category5,product_category6,product_country,product_id,partner_id,Sales'.split(',')
 print(head)
+
 
 X = data.loc[:, head]
 y = data['Sales']
 
+X = X.to_numpy()
+y = y.to_numpy()
 X[np.isnan(X)] = 0
 
 depths = [None, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -34,7 +38,9 @@ model = DecisionTreeClassifier()
 print(model)
 
 
-search = GridSearchCV(estimator=model, param_grid=params, scoring='f1', cv=2, verbose=100, n_jobs=-1)
+#search = GridSearchCV(estimator=model, param_grid=params, scoring='recall', cv=2, verbose=100, n_jobs=-1)
+search = RandomizedSearchCV(estimator=model, param_distributions=params, scoring='recall', n_iter=40, cv=2, n_jobs=-1,
+                            verbose=100)
 search.fit(X, y)
 
 print('============================')
@@ -45,5 +51,3 @@ print(np.sqrt(np.abs(search.best_score_)))
 print('Best params:')
 print('f1:\t', search.best_params_)
 
-
-print(time.time() - start)
