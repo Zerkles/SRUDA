@@ -43,8 +43,8 @@ class ModelBuilder:
                 balanced_data = pd.read_csv(self.filename, sep=self.separator)
                 unbalanced_data = pd.read_csv(self.unbalanced_filename, sep=self.separator)
             else:
-                balanced_data = pd.read_csv(self.filename, sep='\t')
-                unbalanced_data = pd.read_csv(self.unbalanced_filename, sep='\t')
+                balanced_data = pd.read_csv(self.filename, sep=',')
+                unbalanced_data = pd.read_csv(self.unbalanced_filename, sep=',')
         except FileNotFoundError:
             print('No file named: ' + self.filename)
             return 1, None, None

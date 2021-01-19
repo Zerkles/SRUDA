@@ -1,5 +1,7 @@
 import click
 import time
+
+from src.balancing.utilities import funkcja
 from src.model_builder.model_builder import ModelBuilder
 
 
@@ -10,12 +12,14 @@ def do_preprocessing():
 @click.command()
 @click.option('-m', '--model', 'model', required=True, multiple=True,
               type=click.Choice(['xgb', 'cat', 'reg', 'tree'], case_sensitive=False), help='Models to train')
-@click.option('-p', '--pre-processing', 'preprocessing_types', required=False,
-              multiple=True, help='Pre-processing algorithms to use')
+@click.option('-b', '--balancing', 'balancing', required=False, multiple=False,
+              type=click.Choice(['ros', 'rus'], case_sensitive=False), help='Balancing techniques applied')
 @click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
+@click.option('-uf', '--unbalanced-filepath', 'unbalanced_filepath', required=True, multiple=False,
+              help='Path to unbalanced test dataset', default='data/criteo/criteo_40k.csv')
 @click.option('-o', '--out', 'result_directory', required=False, multiple=False,
-              help='Directory to save logs and results', default='results_'+str(int(time.time())))
-def main(model, preprocessing_types, in_file, result_directory):
+              help='Directory to save logs and results', default='results_' + str(int(time.time())))
+def main(model, balancing, in_file, result_directory, unbalanced_filepath):
     """
     Bachelor Thesis project.\n
     SRUDA - System for Rating Unbalanced Data Algorithms.\n
@@ -24,18 +28,18 @@ def main(model, preprocessing_types, in_file, result_directory):
     ./main.py -m xgb -m tree -i data2.csv\n
     ./main.py -m reg -i data.csv -o some_results.csv\n
     """
-    print(model, preprocessing_types, in_file, result_directory)
+    print(model, in_file, result_directory)
     # preprocessing
     # balancing
     # model building
 
-    unbalanced_name = 'data/criteo/criteo_40k.csv'
+    balanced_filepath = funkcja(balancing, in_file)
 
     for name in model:
         builder = ModelBuilder(model_name=name,
-                               filename=in_file,
-                               unbalanced_filename=unbalanced_name,
-                               separator='\t',
+                               filename=balanced_filepath,
+                               unbalanced_filename=unbalanced_filepath,
+                               separator=',',
                                labels_header='Sales'
                                )
         results, pred_balanced, real_balanced, pred_unbalanced, real_unbalanced = builder.get_result()
@@ -57,4 +61,3 @@ def main(model, preprocessing_types, in_file, result_directory):
 
 if __name__ == "__main__":
     main()
-

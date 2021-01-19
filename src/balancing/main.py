@@ -10,7 +10,7 @@ from src.balancing import data_controller
 if __name__ == '__main__':
     # data = data_controller.get_categorized_data(1000)
     # data = data_controller.get_converted_data(100)
-    data = data_controller.get_feature_selected_data()
+    data = data_controller.get_feature_selected_data(filepath)
 
     X_original, y_original = split_data_on_x_y(data)
     print("Classes size:", count_classes_size(y_original))

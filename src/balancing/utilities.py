@@ -1,12 +1,15 @@
 import os
 
 from imblearn.metrics import geometric_mean_score
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import precision_score, balanced_accuracy_score
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+from src.balancing import data_controller
 from src.balancing.data_controller import path_data_dir
 import pandas as pd
 
@@ -47,10 +50,13 @@ def resample_and_write_to_csv(obj, X, y, name=None):
 
     write_df = X_resampled.copy()
     write_df["Sales"] = y_resampled
-    write_df.to_csv(path_balanced_csv + "/" + name + ".csv", index=False)
+
+    filepath = path_balanced_csv + "/" + name + ".csv"
+
+    write_df.to_csv(filepath, index=False)
     print("Balanced:", name, '\n')
 
-    return X_resampled, y_resampled
+    return filepath
 
 
 def train_all_from_csv():
@@ -126,3 +132,15 @@ def get_every_nth_element_of_list(L, percent_step):
         step = 1
 
     return L[::step]
+
+def funkcja(balancing_type, filepath):
+    inputDataFrame = data_controller.get_feature_selected_data(filepath)
+    X, y = split_data_on_x_y(inputDataFrame)
+    if balancing_type == 'ros':
+        random_over_sampler = RandomOverSampler()
+        return resample_and_write_to_csv(random_over_sampler, X, y, name='ROS')
+    elif balancing_type == 'rus':
+        random_under_sampler = RandomUnderSampler()
+        return resample_and_write_to_csv(random_under_sampler, X, y, name='RUS')
+    else:
+        print("ERR")
