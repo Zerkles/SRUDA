@@ -49,13 +49,21 @@ class Analysis:
         print(selif.calculate_mean(matrix[6]))
 
     def displot(self,matrix,columns):
-        matrix=np.delete(matrix,0,0)
-        print(matrix)
-        plot_data=(pd.to_numeric([matrix[:,columns[0]]], errors='coerce'))
-        print(plot_data[0])
-        df = pd.DataFrame(data=plot_data[0],columns=["Sale"])
-        #print(df)
-        sns.displot(data=df, x="Sale")
+        matrix_temp=np.delete(matrix,0,0)
+        print(matrix_temp)
+        plot_data=(pd.to_numeric(matrix_temp[:,columns[0]], errors='coerce'))
+        df = pd.DataFrame(data=plot_data,columns=["Sale"])
+        print(df)
+        sns.displot(data=df, x="Sale",bins=2)
+        plt.show()
+
+    def sale_displot(self,matrix):
+        matrix_temp=np.delete(matrix,0,0)
+        print(matrix_temp)
+        plot_data=(pd.to_numeric(matrix_temp[:,1], errors='coerce'))
+        df = pd.DataFrame(data=plot_data,columns=["Sale"])
+        print(df)
+        sns.displot(data=df, x="Sale",bins=2)
         plt.show()
 
 
