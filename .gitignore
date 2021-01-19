@@ -74,9 +74,6 @@ docs/_build/
 # PyBuilder
 target/
 
-# VisualStudio
-*.pyproj
-
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -133,11 +130,12 @@ dmypy.json
 *.csv
 test_*
 
-
-
 .idea/
-data/*.csv
-data/criteo/*.pickle
+*.pickle
 data/criteo/CriteoSearchData
+plots/
 
-src/preprocessing/.vs/preprocessing/v15/.suo
+#uningnored feature_selected_data
+!data/feature_selected_data/**
+!data/feature_selected_data/test_set.csv
+!data/feature_selected_data/imbalanced_set.csv

@@ -1,5 +1,4 @@
 import numpy as np
-
 from catboost import CatBoostClassifier, Pool
 
 # initialize data
