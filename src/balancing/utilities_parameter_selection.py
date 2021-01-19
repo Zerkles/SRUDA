@@ -1,8 +1,12 @@
+from cmath import sqrt
+
 from imblearn.metrics import geometric_mean_score
 from imblearn.over_sampling import RandomOverSampler, SMOTENC
+from imblearn.pipeline import Pipeline
+from imblearn.under_sampling import NearMiss, RandomUnderSampler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import recall_score
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import recall_score, make_scorer
+from sklearn.model_selection import train_test_split, RandomizedSearchCV, GridSearchCV
 
 from src.balancing import data_controller
 import pandas as pd
@@ -45,18 +49,28 @@ def gridsearch_with_graph(resampler_obj, parameters_dist: dict, X, y):
         # print_metrics(y_test, y_pred)
 
     # Drawing graph
-    plt.plot(range(0, len(gmean_scoring)), gmean_scoring)
-    plt.title(obj.__str__().title())
-    plt.xlabel("Experiment Number")
-    plt.ylabel('Geometric Mean Score')
-    plt.show()
+    fig, axs = plt.subplots(len(parameters_dist.keys()) + 1)
+    fig.suptitle(obj.__str__().title().split("(")[0])
+    axs[0].plot(range(0, len(gmean_scoring)), gmean_scoring, markersize=7, marker='o')
+    axs[0].set(ylabel="Geometric Mean Score")
+
+    axs[-1].set(xlabel="Experiment Number")
+    # axs[0].title(obj.__str__().title().split("(")[0])
+    # axs[0].xlabel("Experiment Number")
+    # axs[0].ylabel('Geometric Mean Score')
+    # plt.show()
     for key in parameters_dist.keys():
         param_values = []
         for exp in permutations_dict:
             param_values.append(exp[key])
-        plt.plot(range(len(param_values)), param_values)
-        plt.xlabel("Experiment Number")
-        plt.ylabel(key)
+
+        ax = axs[list(parameters_dist.keys()).index(key) + 1]
+        ax.plot(range(len(param_values)), param_values, markersize=7, marker='o')
+        ax.set(ylabel=key)
+        # ax.xlabel("Experiment Number")
+        # ax.ylabel(key)
+        # ax.title(obj.__str__().title().split("(")[0])
+        # plt.show()
 
     # plt.legend(["Geometric Mean Score"]+list(parameters_dist.keys()), loc="upper right")
     plt.show()
@@ -67,12 +81,12 @@ def gridsearch_with_graph(resampler_obj, parameters_dist: dict, X, y):
     for i in range(1, parameters_count):
         value = max(gmean_scoring)
         index = gmean_scoring.index(value)
-        print(i, "Score", value, "Recall", recall_scoring[index], "for =", permutations_dict[index])
+        print(i, "Geometric Mean Score", value, "Recall", recall_scoring[index], "for =", permutations_dict[index])
         gmean_scoring[index] = 0
     for i in range(1, parameters_count):
         value = max(recall_scoring)
         index = recall_scoring.index(value)
-        print(i, "Recall", value, "Score", gmean_scoring[index], "for =", permutations_dict[index])
+        print(i, "Recall", value, "Geometric Mean Score", gmean_scoring[index], "for =", permutations_dict[index])
         recall_scoring[index] = 0
 
 
@@ -107,37 +121,10 @@ def pipeline_randomized_and_grid_search(X, y):
     print(grid_search.best_score_)
 
 
-# if __name__ == "__main__":
-#     from cmath import sqrt
-#
-#     # This is for feature optimization use
-#     data = data_controller.get_categorized_data(100000)
-#
-#     X = data[list(data.columns)[3:]]
-#     y = pd.DataFrame(data['Sales'], columns=["Sales"])
-#
-#     X = X.values
-#     y = y.values.ravel()
-#
-#     obj_list = []
-#     max_n_neighbors = np.count_nonzero(y == 1) - 1
-#     # max_n_neighbors = 2139
-#
-#     square_root_from_samples_count = int(sqrt(y.shape[0]).real)
-#     print("Square root from samples count:", square_root_from_samples_count)
-#
-#     resampler_name = "NearMiss for "  # + str(int(y.count())) + " samples"
-#
-#     percent_step = 0.05
-#     value_dict = {"n_neighbors": list(range(1, max_n_neighbors, int(percent_step * max_n_neighbors))),
-#                   "version": [3],
-#                   "n_neighbors_ver3": list(range(1, max_n_neighbors, int(percent_step * max_n_neighbors)))}
-#     feature_graph_generator(NearMiss(n_jobs=-1), value_dict, resampler_name, X, y)
-
 if __name__ == "__main__":
     # This is for feature optimization use
     RANDOM_STATE = 0
-    data = data_controller.get_feature_selected_data(10000)
+    data = data_controller.get_feature_selected_data()
     X, y = split_data_on_x_y(data)
 
     class_size = count_classes_size(y)
@@ -146,3 +133,12 @@ if __name__ == "__main__":
     max_n_neighbors = class_size[1] - 1
     percent_step = 0.05
 
+    square_root_from_samples_count = int(class_size[1])
+    print("Square root from samples count:", square_root_from_samples_count)
+
+    value_dict = {"n_neighbors": get_every_nth_element_of_list(list(range(1, max_n_neighbors)), percent_step),
+                  "version": [1, 2, 3],
+                  "n_neighbors_ver3": get_every_nth_element_of_list(list(range(1, max_n_neighbors)), percent_step)}
+
+    obj = NearMiss(n_jobs=-1)
+    gridsearch_with_graph(obj, value_dict, X, y)
