@@ -9,11 +9,11 @@ from sklearn.metrics import precision_score, balanced_accuracy_score
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-from src.balancing import data_controller
-from src.balancing.data_controller import path_data_dir
+from src.balancing import data_controller, oversampling, undersampling
+from src.balancing.data_controller import path_data_dir, path_balanced_csv
 import pandas as pd
 
-path_balanced_csv = path_data_dir + "/balanced_csv"
+
 
 
 def train_and_score(X, y):
@@ -42,13 +42,12 @@ def percent_change(original, value):
 
 def resample_and_write_to_csv(obj, X, y, name=None):
     if name is None:
-        name = obj.__str__()
+        name = obj.__str__().split("(")[0]
 
     X_resampled, y_resampled = obj.fit_resample(X, y)
-
     # print("Classes size:", count_classes_size(y_resampled))
 
-    write_df = X_resampled.copy()
+    write_df = X_resampled
     write_df["Sales"] = y_resampled
 
     filepath = path_balanced_csv + "/" + name + ".csv"
@@ -133,14 +132,21 @@ def get_every_nth_element_of_list(L, percent_step):
 
     return L[::step]
 
-def funkcja(balancing_type, filepath):
-    inputDataFrame = data_controller.get_feature_selected_data(filepath)
-    X, y = split_data_on_x_y(inputDataFrame)
+
+def resampler_selector(balancing_type, filepath):
+    input_data = data_controller.get_feature_selected_data(filepath)
+    X, y = split_data_on_x_y(input_data)
+
     if balancing_type == 'ros':
-        random_over_sampler = RandomOverSampler()
-        return resample_and_write_to_csv(random_over_sampler, X, y, name='ROS')
+        obj = oversampling.random_over_sampler_optimized()
+    elif balancing_type == 'smotenc':
+        if input_data.shape[0] > 10000:  # it just cant handle more than 10k samples because of ram
+            X = X.head(10000)
+            y = y.head(10000)
+        obj = oversampling.smotenc_optimized(X)
     elif balancing_type == 'rus':
-        random_under_sampler = RandomUnderSampler()
-        return resample_and_write_to_csv(random_under_sampler, X, y, name='RUS')
+        obj = undersampling.random_under_sampler_optimized()
     else:
         print("ERR")
+        return None
+    return resample_and_write_to_csv(obj, X, y), list(y.columns)[0], ','

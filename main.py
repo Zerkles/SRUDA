@@ -1,7 +1,7 @@
 import click
 import time
 
-from src.balancing.utilities import funkcja
+from src.balancing.utilities import resampler_selector
 from src.model_builder.model_builder import ModelBuilder
 
 
@@ -11,9 +11,9 @@ def do_preprocessing():
 
 @click.command()
 @click.option('-m', '--model', 'model', required=True, multiple=True,
-              type=click.Choice(['xgb', 'cat', 'reg', 'tree'], case_sensitive=False), help='Models to train')
-@click.option('-b', '--balancing', 'balancing', required=False, multiple=False,
-              type=click.Choice(['ros', 'rus'], case_sensitive=False), help='Balancing techniques applied')
+              type=click.Choice(['xgb', 'cat', 'reg', 'tree']), help='Models to train')
+@click.option('-b', '--balancing', 'balancing', required=False, multiple=True,
+              type=click.Choice(['ros', 'rus', 'smotenc']), help='Balancing method')
 @click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
 @click.option('-uf', '--unbalanced-filepath', 'unbalanced_filepath', required=True, multiple=False,
               help='Path to unbalanced test dataset', default='data/criteo/criteo_40k.csv')
@@ -33,17 +33,18 @@ def main(model, balancing, in_file, result_directory, unbalanced_filepath):
     # balancing
     # model building
 
-    balanced_filepath = funkcja(balancing, in_file)
+    for resampler_name in balancing:
+        balanced_filepath, ylabel, separator = resampler_selector(resampler_name, in_file)
 
-    for name in model:
-        builder = ModelBuilder(model_name=name,
-                               filename=balanced_filepath,
-                               unbalanced_filename=unbalanced_filepath,
-                               separator=',',
-                               labels_header='Sales'
-                               )
-        results, pred_balanced, real_balanced, pred_unbalanced, real_unbalanced = builder.get_result()
-        print(results)
+        for model_name in model:
+            builder = ModelBuilder(model_name=model_name,
+                                   filename=balanced_filepath,
+                                   unbalanced_filename=unbalanced_filepath,
+                                   separator=separator,
+                                   labels_header=ylabel
+                                   )
+            results, pred_balanced, real_balanced, pred_unbalanced, real_unbalanced = builder.get_result()
+            print(results)
     d = {
         "filename": "data_set_1",
         "time": 24.3,

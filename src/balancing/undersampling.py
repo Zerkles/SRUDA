@@ -1,83 +1,65 @@
-from cmath import sqrt
-from collections import Counter
-
 from imblearn.under_sampling import ClusterCentroids, RandomUnderSampler, NearMiss, TomekLinks, EditedNearestNeighbours, \
-    RepeatedEditedNearestNeighbours, AllKNN, CondensedNearestNeighbour, OneSidedSelection, NeighbourhoodCleaningRule
-
-from src.balancing.utilities import resample_and_write_to_csv, feature_graph_generator
-
-
-def cluster_centroids_variations(X, y):
-    obj = ClusterCentroids(random_state=0, n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "ClusterCentroids" + str(obj.get_params()))
+    RepeatedEditedNearestNeighbours, AllKNN, CondensedNearestNeighbour, OneSidedSelection, NeighbourhoodCleaningRule, \
+    InstanceHardnessThreshold
+from sklearn.linear_model import LogisticRegression
 
 
-def condensed_nearest_neighbours_variations(X, y):
-    obj = CondensedNearestNeighbour(random_state=0, n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "CondensedNearestNeighbours" + str(obj.get_params()))
+def cluster_centroids_optimized():
+    return ClusterCentroids(random_state=0, n_jobs=-1)
 
 
-def edited_nearest_neighbours_variations(X, y):
-    obj = EditedNearestNeighbours(kind_sel='all', n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "EditedNearestNeighbours" + str(obj.get_params()))
+def condensed_nearest_neighbours_optimized():
+    return CondensedNearestNeighbour(random_state=0, n_jobs=-1)
 
 
-def repeated_edited_nearest_neighbours_variations(X, y):
-    obj = RepeatedEditedNearestNeighbours(n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "RepeatedEditedNearestNeighbours" + str(obj.get_params()))
+def edited_nearest_neighbours_optimized():
+    return EditedNearestNeighbours(kind_sel='all', n_jobs=-1)
 
 
-def allknn_variations(X, y):
-    obj = AllKNN(n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "AllKNN" + str(obj.get_params()))
+def repeated_edited_nearest_neighbours_optimized():
+    return RepeatedEditedNearestNeighbours(n_jobs=-1)
 
 
-def instance_hardness_threshold_variations(X, y):
-    from sklearn.linear_model import LogisticRegression
-    from imblearn.under_sampling import InstanceHardnessThreshold
-    obj = InstanceHardnessThreshold(random_state=0,
-                                    estimator=LogisticRegression(
-                                        solver='lbfgs', multi_class='auto', n_jobs=-1), n_jobs=-1)
-
-    # resample_and_write_to_csv(obj, X, y, "InstanceHardnessThreshold" + str(obj.get_params()))
-    resample_and_write_to_csv(obj, X, y, "InstanceHardnessThreshold")
+def allknn_optimized():
+    return AllKNN(n_jobs=-1)
 
 
-def near_miss_variations(X, y):
-    obj = NearMiss(version=1, n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "NearMiss" + str(obj.get_params()))
+def instance_hardness_threshold_optimized():
+    return InstanceHardnessThreshold(random_state=0,
+                                     estimator=LogisticRegression(
+                                         solver='lbfgs', multi_class='auto', n_jobs=-1), n_jobs=-1)
 
 
-def neighbourhood_cleaning_rule_variations(X, y):
-    obj = NeighbourhoodCleaningRule(n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "NeighbourhoodCleaningRule" + str(obj.get_params()))
+def near_miss_optimized():
+    return NearMiss(version=1, n_jobs=-1)
 
 
-def one_sided_selection_variations(X, y):
-    obj = OneSidedSelection(random_state=0, n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "OneSidedSelection" + str(obj.get_params()))
+def neighbourhood_cleaning_rule_optimized():
+    return NeighbourhoodCleaningRule(n_jobs=-1)
 
 
-def random_under_sampler_variations(X, y):
-    obj = RandomUnderSampler(random_state=0)
-    resample_and_write_to_csv(obj, X, y, "RandomUnderSampler" + str(obj.get_params()))
+def one_sided_selection_optimized():
+    return OneSidedSelection(random_state=0, n_jobs=-1)
 
 
-def tomek_links_variations(X, y):
-    obj = TomekLinks(sampling_strategy='auto', n_jobs=-1)
-    resample_and_write_to_csv(obj, X, y, "TomekLinks" + str(obj.get_params()))
+def random_under_sampler_optimized():
+    return RandomUnderSampler(random_state=0)
 
 
-def balance_all_undersampling(X, y):
+def tomek_links_optimized():
+    return TomekLinks(sampling_strategy='auto', n_jobs=-1)
+
+
+def balance_all_undersampling(X):
     print("Undersampling methods balancing:")
-    # cluster_centroids_variations(X, y)  # UWAGA! Generuje nowe dane dla cech kategorycznych!
-    # condensed_nearest_neighbours_variations(X, y)
-    # edited_nearest_neighbours_variations(X, y)
-    # repeated_edited_nearest_neighbours_variations(X, y)
-    # allknn_variations(X, y)
-    # instance_hardness_threshold_variations(X, y)
-    # near_miss_variations(X, y)
-    # neighbourhood_cleaning_rule_variations(X, y)
-    # one_sided_selection_variations(X, y)
-    random_under_sampler_variations(X, y)
-    # tomek_links_variations(X, y)
+    # cluster_centroids_optimized(X, y)  # UWAGA! Generuje nowe dane dla cech kategorycznych!
+    # condensed_nearest_neighbours_optimized(X, y)
+    # edited_nearest_neighbours_optimized(X, y)
+    # repeated_edited_nearest_neighbours_optimized(X, y)
+    # allknn_optimized(X, y)
+    # instance_hardness_threshold_optimized(X, y)
+    # near_miss_optimized(X, y)
+    # neighbourhood_cleaning_rule_optimized(X, y)
+    # one_sided_selection_optimized(X, y)
+    random_under_sampler_optimized()
+    # tomek_links_optimized(X, y)
