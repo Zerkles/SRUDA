@@ -15,8 +15,9 @@ header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_time
 path_data_dir = 'data'
 path_data_original_criteo = path_data_dir + '/criteo/CriteoSearchData'
 path_categorized_criteo = path_data_dir + '/criteo/CriteoSearchDataCategorized.csv'
-path_feature_selected = path_data_dir + '/feature_selected/imbalance_set.csv'
+path_feature_selected = path_data_dir + '/feature_selected_data/imbalance_set.csv'
 path_labelEncoderDict = path_data_dir + '/criteo/' + "LabelEncoderDict.pickle"
+path_balanced_csv = path_data_dir + "/balanced_csv"
 
 
 def fun(x):

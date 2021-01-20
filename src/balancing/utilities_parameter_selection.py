@@ -49,28 +49,24 @@ def gridsearch_with_graph(resampler_obj, parameters_dist: dict, X, y):
         # print_metrics(y_test, y_pred)
 
     # Drawing graph
-    fig, axs = plt.subplots(len(parameters_dist.keys()) + 1)
+    plot_colors = ['tab:blue', 'tab:green', 'tab:orange', 'tab:violet', 'tab:pink', 'tab:brown', 'tab:red']
+    fig, axs = plt.subplots(len(parameters_dist.keys()) + 1, **{"figsize": (18, 10)})
     fig.suptitle(obj.__str__().title().split("(")[0])
-    axs[0].plot(range(0, len(gmean_scoring)), gmean_scoring, markersize=7, marker='o')
-    axs[0].set(ylabel="Geometric Mean Score")
+    # fig.tight_layout()
 
+    # fig.grid()
+    axs[0].plot(range(0, len(gmean_scoring)), gmean_scoring, plot_colors[0], markersize=5, marker='o')
+    axs[0].set(ylabel="Geometric Mean Score")
     axs[-1].set(xlabel="Experiment Number")
-    # axs[0].title(obj.__str__().title().split("(")[0])
-    # axs[0].xlabel("Experiment Number")
-    # axs[0].ylabel('Geometric Mean Score')
-    # plt.show()
     for key in parameters_dist.keys():
         param_values = []
         for exp in permutations_dict:
             param_values.append(exp[key])
 
-        ax = axs[list(parameters_dist.keys()).index(key) + 1]
-        ax.plot(range(len(param_values)), param_values, markersize=7, marker='o')
+        plot_index = list(parameters_dist.keys()).index(key) + 1
+        ax = axs[plot_index]
+        ax.plot(range(len(param_values)), param_values, plot_colors[plot_index], markersize=5, marker='o')
         ax.set(ylabel=key)
-        # ax.xlabel("Experiment Number")
-        # ax.ylabel(key)
-        # ax.title(obj.__str__().title().split("(")[0])
-        # plt.show()
 
     # plt.legend(["Geometric Mean Score"]+list(parameters_dist.keys()), loc="upper right")
     plt.show()
@@ -124,21 +120,24 @@ def pipeline_randomized_and_grid_search(X, y):
 if __name__ == "__main__":
     # This is for feature optimization use
     RANDOM_STATE = 0
-    data = data_controller.get_feature_selected_data()
+    data = data_controller.get_feature_selected_data(data_controller.path_feature_selected)
     X, y = split_data_on_x_y(data)
 
     class_size = count_classes_size(y)
     print("Classes size:", class_size)
 
     max_n_neighbors = class_size[1] - 1
-    percent_step = 0.05
+    percent_step = 0.025
 
     square_root_from_samples_count = int(class_size[1])
     print("Square root from samples count:", square_root_from_samples_count)
 
+    # value_dict = {"n_neighbors": get_every_nth_element_of_list(list(range(1, max_n_neighbors)), percent_step),
+    #               "version": [3],
+    #               "n_neighbors_ver3": get_every_nth_element_of_list(list(range(1, max_n_neighbors)), percent_step)}
+
     value_dict = {"n_neighbors": get_every_nth_element_of_list(list(range(1, max_n_neighbors)), percent_step),
-                  "version": [1, 2, 3],
-                  "n_neighbors_ver3": get_every_nth_element_of_list(list(range(1, max_n_neighbors)), percent_step)}
+                  "version": [1, 2]}
 
     obj = NearMiss(n_jobs=-1)
     gridsearch_with_graph(obj, value_dict, X, y)
