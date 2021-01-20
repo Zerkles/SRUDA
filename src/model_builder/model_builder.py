@@ -92,7 +92,11 @@ class ModelBuilder:
                                   max_depth=7,
                                   max_delta_step=4,
                                   learning_rate=0.19,
-                                  gamma=6)
+                                  gamma=6,
+                                  verbosity=0,
+                                  booster="gbtree",
+                                  n_jobs=-1,
+                                  use_label_encoder=False)
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
             model = CatBoostClassifier(loss_function='Logloss',
@@ -101,7 +105,8 @@ class ModelBuilder:
                                        n_estimators=80,
                                        max_depth=6,
                                        learning_rate=0.075,
-                                       border_count=165)
+                                       border_count=165,
+                                       verbose=0)
             result['model'] = 'cat'
         elif self.model_name == 'reg':
             model = LogisticRegression(tol=0.001,
@@ -139,6 +144,8 @@ class ModelBuilder:
         result['balanced']['test_time'] = time.time() - time_start
         result['balanced']['mean_score'] = model.score(x[1], y[1])
         result['balanced']['predict_proba'] = model.predict_proba(x[1])
+        result['balanced']['predicted'] = predicted_balanced
+        result['balanced']['real'] = y[1]
 
         result['balanced']['TN'], result['balanced']['FP'], result['balanced']['FN'], result['balanced']['TP'] = \
             ModelBuilder.create_confusion_table(
@@ -152,6 +159,8 @@ class ModelBuilder:
         result['unbalanced']['test_time'] = time.time() - time_start
         result['unbalanced']['mean_score'] = model.score(x[2], y[2])
         result['unbalanced']['predict_proba'] = model.predict_proba(x[2])
+        result['unbalanced']['predicted'] = predicted_unbalanced
+        result['unbalanced']['real'] = y[2]
 
         result['unbalanced']['TN'], result['unbalanced']['FP'], result['unbalanced']['FN'], result['unbalanced']['TP'] \
             = ModelBuilder.create_confusion_table(
