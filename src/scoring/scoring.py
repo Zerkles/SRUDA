@@ -118,17 +118,28 @@ class ScoringAlgs:
         #     self.correct_labels['no_skill'] = real[0]
         #     self.predicted_labels['no_skill'] = [0 for _ in range(len(preds[0]))]
 
-    def calculate_other_measures(self, y_pred=None, y_true=None, balanced_acc_score=True, acc=True, recall=True,
-                                 f1=True):
+    def calculate_other_measures(self, y_pred=None, y_true=None, scores=None):
+        """
+        @param y_pred: predicted y values
+        @param y_true: true y values
+        @param scores: list of scores you can calculate,
+        viable options are: "balanced_acc_score", "acc", "recall", "f1" or "auroc", defaults to all if none specified
+        @return: dict of results for each score: {score: { model: value, ...}, ...}
+        """
+
+        if scores is None:
+            scores = ['balanced_acc_score', 'acc', 'recall', 'f1', 'auroc']
         resultDict = {}
-        if balanced_acc_score:
-            resultDict['balanced_acc_score'] = self.calculate_score(balanced_accuracy_score)
-        if acc:
-            resultDict['accuracy'] = self.calculate_score(accuracy_score)
-        if recall:
-            resultDict['recall'] = self.calculate_score(recall_score)
-        if f1:
-            resultDict['f1'] = self.calculate_score(f1_score)
+        if "balanced_acc_score" in scores:
+            resultDict['Balanced accuracy score'] = self.calculate_score(balanced_accuracy_score)
+        if "acc" in scores:
+            resultDict['Accuracy'] = self.calculate_score(accuracy_score)
+        if "recall" in scores:
+            resultDict['Recall'] = self.calculate_score(recall_score)
+        if "f1" in scores:
+            resultDict['F1'] = self.calculate_score(f1_score)
+        if "auroc" in scores:
+            resultDict['AUROC'] = self.auc_scores
         return resultDict
 
     def calculate_score(self, func):

@@ -3,6 +3,7 @@ import time
 
 from src.balancing.utilities import resampler_selector
 from src.model_builder.model_builder import ModelBuilder
+from src.scoring.scoring_main import scoring_starter
 
 
 def do_preprocessing():
@@ -32,8 +33,10 @@ def main(model, balancing, in_file, result_directory, unbalanced_filepath):
     # preprocessing
     # balancing
     # model building
+    resultDict = {}
 
     for resampler_name in balancing:
+        balancing_method_dict = {}
         balanced_filepath, ylabel, separator = resampler_selector(resampler_name, in_file)
 
         for model_name in model:
@@ -45,6 +48,11 @@ def main(model, balancing, in_file, result_directory, unbalanced_filepath):
                                    )
             results, pred_balanced, real_balanced, pred_unbalanced, real_unbalanced = builder.get_result()
             print(results)
+            balancing_method_dict[model_name] = results
+
+        resultDict[resampler_name] = balancing_method_dict
+
+    scoring_starter(result_dict=resultDict, base_output_directory="results/")
     d = {
         "filename": "data_set_1",
         "time": 24.3,
