@@ -86,45 +86,48 @@ class ModelBuilder:
         model = None
 
         if self.model_name == 'xgb':
-            model = XGBClassifier(gamma=9,
-                                  learning_rate=0.003,
-                                  max_delta_step=1,
-                                  max_depth=6,
-                                  min_child_weight=7,
-                                  n_estimators=220,
-                                  subsample=0.8,
+            model = XGBClassifier(subsample=0.25,
+                                  n_estimators=270,
+                                  min_child_weight=3,
+                                  max_depth=7,
+                                  max_delta_step=4,
+                                  learning_rate=0.19,
+                                  gamma=6,
                                   verbosity=0,
                                   booster='gbtree',
                                   n_jobs=-1,
-                                  use_label_encoder='False')
+                                  use_label_encoder=False)
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
             model = CatBoostClassifier(loss_function='Logloss',
-                                       scale_pos_weight=28.0,
-                                       reg_lambda=4.5,
-                                       n_estimators=115,
-                                       max_depth=7,
-                                       learning_rate=0.015,
-                                       border_count=120)
+                                       scale_pos_weight=24.0,
+                                       reg_lambda=9.5,
+                                       n_estimators=80,
+                                       max_depth=6,
+                                       learning_rate=0.075,
+                                       border_count=165,
+                                       verbose=0)
             result['model'] = 'cat'
         elif self.model_name == 'reg':
-            model = LogisticRegression(solver='newton-cg',
-                                       penalty='none',
-                                       max_iter=190,
+            model = LogisticRegression(tol=0.001,
+                                       solver='newton-cg',
+                                       penalty='l2',
+                                       max_iter=1000,
                                        intercept_scaling=1.0,
-                                       fit_intercept=False,
+                                       fit_intercept=True,
                                        dual=False,
                                        class_weight='balanced',
-                                       C=0.0)
+                                       C=0.0001,
+                                       verbose=1000)
             result['model'] = 'reg'
         elif self.model_name == 'tree':
-            model = DecisionTreeClassifier(criterion='gini',
-                                           max_depth=None,
+            model = DecisionTreeClassifier(splitter='random',
+                                           random_state=25,
+                                           min_weight_fraction_leaf=0.3,
+                                           min_samples_split=7,
                                            max_features='auto',
-                                           min_samples_split=0.1,
-                                           min_weight_fraction_leaf=0.1,
-                                           random_state=0,
-                                           splitter='random')
+                                           max_depth=9,
+                                           criterion='entropy')
             result['model'] = 'tree'
 
         if not model:
@@ -141,6 +144,8 @@ class ModelBuilder:
         result['balanced']['test_time'] = time.time() - time_start
         result['balanced']['mean_score'] = model.score(x[1], y[1])
         result['balanced']['predict_proba'] = model.predict_proba(x[1])
+        result['balanced']['predicted'] = predicted_balanced
+        result['balanced']['real'] = y[1]
 
         result['balanced']['TN'], result['balanced']['FP'], result['balanced']['FN'], result['balanced']['TP'] = \
             ModelBuilder.create_confusion_table(
@@ -154,6 +159,8 @@ class ModelBuilder:
         result['unbalanced']['test_time'] = time.time() - time_start
         result['unbalanced']['mean_score'] = model.score(x[2], y[2])
         result['unbalanced']['predict_proba'] = model.predict_proba(x[2])
+        result['unbalanced']['predicted'] = predicted_unbalanced
+        result['unbalanced']['real'] = y[2]
 
         result['unbalanced']['TN'], result['unbalanced']['FP'], result['unbalanced']['FN'], result['unbalanced']['TP'] \
             = ModelBuilder.create_confusion_table(
