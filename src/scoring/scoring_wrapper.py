@@ -90,7 +90,7 @@ def make_dir_if_not_present(mypath):
             raise
 
 
-def parse_scores_dict(scores_file, balancing_type='balanced'):
+def parse_scores_dict(scores_file, balancing_type='balanced', precision = "{:.6f}"):
     cols_data = {}
     column_labels = {}
     tables_cols = {}
@@ -114,7 +114,7 @@ def parse_scores_dict(scores_file, balancing_type='balanced'):
                     cols_data[x] = {}
                 if z not in cols_data[x].keys():
                     cols_data[x][z] = []
-                cols_data[x][z].append(tables_cols[x][y][z])
+                cols_data[x][z].append(float(precision.format(tables_cols[x][y][z])))
 
     for x in cols_data.keys():
         df = pd.DataFrame.from_dict(cols_data[x], orient='index', columns=column_labels[x])
