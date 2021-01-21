@@ -64,24 +64,41 @@ class ScoringAlgs:
 
         # fill with Nones if model_names_copy is not equal to axes length
         model_names_copy = list(self.conf_matrices.keys())
-        if len(model_names_copy) < axes.size:
-            model_names_copy.extend([None for _ in range(axes.size - len(model_names_copy))])
 
-        model_names_copy = np.asarray(model_names_copy).reshape(axes.shape)
+        if type(axes) is np.ndarray:
+            if len(model_names_copy) < axes.size:
+                model_names_copy.extend([None for _ in range(axes.size - len(model_names_copy))])
+
+            model_names_copy = np.asarray(model_names_copy).reshape(axes.shape)
 
         # plot graph
         for value in np.nditer(model_names_copy, flags=['refs_ok']):
-            row, col = np.argwhere(model_names_copy == value)[0]
-            axes[row][col].set_title('Truth table for {}'.format(value))
-            if value == None:
-                axes[row][col].set_visible(False)
+            if isinstance(model_names_copy[0], np.ndarray):
+                row, col = np.argwhere(model_names_copy == value)[0]
+                axes[row][col].set_title('Truth table for {}'.format(value))
+                if value == None:
+                    axes[row][col].set_visible(False)
+                else:
+                    sns.heatmap(data=self.conf_matrices[str(value)], annot=conf_matrices_annots[str(value)], fmt='',
+                                ax=axes[row][col], cmap='Blues', xticklabels=False, yticklabels=False)
+                    plt.setp(axes[row][col], xlabel='Predicted labels', ylabel='True labels')
             else:
-                sns.heatmap(data=self.conf_matrices[str(value)], annot=conf_matrices_annots[str(value)], fmt='',
-                            ax=axes[row][col], cmap='Blues', xticklabels=False, yticklabels=False)
-                plt.setp(axes[row][col], xlabel='Predicted labels', ylabel='True labels')
+                index = np.nonzero(model_names_copy == value)[0]
+                if isinstance(axes, np.ndarray):
+                    # axes = [matplotlib.AxesSubplot, matplotlib.AxesSubplot]
+                    axes[index[0]].set_title('Truth table for {}'.format(value))
+                    sns.heatmap(data=self.conf_matrices[str(value)], annot=conf_matrices_annots[str(value)], fmt='',
+                                ax=axes[index[0]], cmap='Blues', xticklabels=False, yticklabels=False)
+                    plt.setp(axes[index[0]], xlabel='Predicted labels', ylabel='True labels')
+                else:
+                    # axes = matplotlib.AxesSubplot
+                    axes.set_title('Truth table for {}'.format(value))
+                    sns.heatmap(data=self.conf_matrices[str(value)], annot=conf_matrices_annots[str(value)], fmt='',
+                                ax=axes, cmap='Blues', xticklabels=False, yticklabels=False)
+                    plt.setp(axes, xlabel='Predicted labels', ylabel='True labels')
 
         # dopóki w tym result nie mam jeszcze zapisanego sposobu balansowania ani preprocessingu, to zapisuję tylko tutaj
-        plt.savefig(filename+'.jpeg')
+        plt.savefig(filename + '.jpeg')
         plt.close()
 
     def calculate_roc_auc(self):
@@ -94,7 +111,7 @@ class ScoringAlgs:
             model_roc_curves.append({'model': model_name, 'fpr': model_fpr, 'tpr': model_tpr})
         self.roc_curves = model_roc_curves
 
-    def plot_roc_auc(self, filename = 'ROCs'):
+    def plot_roc_auc(self, filename='ROCs'):
         self.calculate_roc_auc()
         line_styles = ['-', '--', '-.', ':']
         for x in self.roc_curves:
@@ -103,7 +120,7 @@ class ScoringAlgs:
         plt.ylabel('True positive rate')
         plt.legend()
         # dopóki w tym result nie mam jeszcze zapisanego sposobu balansowania ani preprocessingu, to zapisuję tylko tutaj
-        plt.savefig(filename+'.jpeg')
+        plt.savefig(filename + '.jpeg')
         plt.close()
 
     def set_model_names(self, new_model_names):
@@ -133,7 +150,7 @@ class ScoringAlgs:
         """
 
         if scores is None:
-            scores = ['balanced_acc_score', 'acc', 'recall', 'f1', 'auroc','train_time', 'test_time']
+            scores = ['balanced_acc_score', 'acc', 'recall', 'f1', 'auroc', 'train_time', 'test_time']
         resultDict = {}
         if "balanced_acc_score" in scores:
             resultDict['Balanced accuracy score'] = self.calculate_score(balanced_accuracy_score)

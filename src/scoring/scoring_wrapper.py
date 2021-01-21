@@ -1,5 +1,5 @@
-import os
-
+from errno import EEXIST
+from os import makedirs, path
 from tqdm import tqdm
 import pandas as pd
 from src.scoring.scoring import ScoringAlgs
@@ -78,8 +78,6 @@ def extract_selected_test_type(data_dict, test_type='balanced'):
 
 def make_dir_if_not_present(mypath):
     """Creates a directory. equivalent to using mkdir -p on the command line"""
-    from errno import EEXIST
-    from os import makedirs, path
 
     try:
         makedirs(mypath)
@@ -90,7 +88,7 @@ def make_dir_if_not_present(mypath):
             raise
 
 
-def parse_scores_dict(scores_file, balancing_type='balanced', precision = "{:.6f}"):
+def parse_scores_dict(scores_file, balancing_type='balanced', precision="{:.6f}"):
     cols_data = {}
     column_labels = {}
     tables_cols = {}
