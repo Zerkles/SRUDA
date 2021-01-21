@@ -28,6 +28,10 @@ class ScoringAlgs:
 
         self.model_names = []
 
+        self.model_train_time = {}
+
+        self.model_test_time = {}
+
         self.init_from_dict(results)
         super().__init__()
 
@@ -108,12 +112,13 @@ class ScoringAlgs:
     def init_from_dict(self, result_dict):
         self.set_model_names(result_dict.keys())
         truth_table_keys = ['TN', 'FP', 'FN', 'TP']
-
         for model_name in self.model_names:
             self.correct_labels[model_name] = result_dict[model_name]['results']['real']
             self.predicted_labels[model_name] = result_dict[model_name]['results']['predicted']
             self.probas[model_name] = result_dict[model_name]['results']['predict_proba'][:, 1]
             self.conf_matrices[model_name] = [result_dict[model_name]['results'][key] for key in truth_table_keys]
+            self.model_train_time[model_name] = result_dict[model_name]['train_time']
+            self.model_test_time[model_name] = result_dict[model_name]['results']['test_time']
         # if add_ns_probs:
         #     self.correct_labels['no_skill'] = real[0]
         #     self.predicted_labels['no_skill'] = [0 for _ in range(len(preds[0]))]
@@ -123,12 +128,12 @@ class ScoringAlgs:
         @param y_pred: predicted y values
         @param y_true: true y values
         @param scores: list of scores you can calculate,
-        viable options are: "balanced_acc_score", "acc", "recall", "f1" or "auroc", defaults to all if none specified
+        viable options are: "balanced_acc_score", "acc", "recall", "f1", "auroc", "train_time" or "test_time" defaults to all if none specified
         @return: dict of results for each score: {score: { model: value, ...}, ...}
         """
 
         if scores is None:
-            scores = ['balanced_acc_score', 'acc', 'recall', 'f1', 'auroc']
+            scores = ['balanced_acc_score', 'acc', 'recall', 'f1', 'auroc','train_time', 'test_time']
         resultDict = {}
         if "balanced_acc_score" in scores:
             resultDict['Balanced accuracy score'] = self.calculate_score(balanced_accuracy_score)
@@ -140,6 +145,10 @@ class ScoringAlgs:
             resultDict['F1'] = self.calculate_score(f1_score)
         if "auroc" in scores:
             resultDict['AUROC'] = self.auc_scores
+        if "train_time" in scores:
+            resultDict['train_time'] = self.model_train_time
+        if "test_time" in scores:
+            resultDict['test_time'] = self.model_test_time
         return resultDict
 
     def calculate_score(self, func):

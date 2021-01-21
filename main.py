@@ -3,7 +3,7 @@ import time
 
 from src.balancing.utilities import resampler_selector
 from src.model_builder.model_builder import ModelBuilder
-from src.scoring.scoring_main import scoring_starter
+from src.scoring.scoring_wrapper import scoring_starter
 
 
 def do_preprocessing():
@@ -53,17 +53,6 @@ def main(model, balancing, in_file, result_directory, unbalanced_filepath):
         resultDict[resampler_name] = balancing_method_dict
 
     scoring_starter(result_dict=resultDict, base_output_directory="results/")
-    d = {
-        "filename": "data_set_1",
-        "time": 24.3,
-        "TP": 100,
-        "TN": 100,
-        "FP": 10,
-        "FN": 10,
-        "score": (0, 2, 4, 4)
-    }
-
-    # ---------------------
 
     return 0
 
