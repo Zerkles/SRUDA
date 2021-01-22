@@ -14,7 +14,7 @@ def kmeans_smote_optimized():
 
 
 def random_over_sampler_optimized():
-    return RandomOverSampler(random_state=0)
+    return RandomOverSampler(sampling_strategy='auto', random_state=0)
 
 
 def smote_optimized():
