@@ -3,6 +3,7 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 import numpy as np
@@ -83,7 +84,6 @@ class ModelBuilder:
                     y: (List[int], List[int], List[int])
                     ) -> (dict, List[int], List[int], List[int], List[int]):
         result = {}
-        model = None
 
         if self.model_name == 'xgb':
             model = XGBClassifier(subsample=0.25,
@@ -127,10 +127,19 @@ class ModelBuilder:
                                            min_samples_split=7,
                                            max_features='auto',
                                            max_depth=9,
-                                           criterion='entropy')
+                                           class_weight='balanced',
+                                           criterion='gini')
             result['model'] = 'tree'
-
-        if not model:
+        elif self.model_name == 'for':
+            model = RandomForestClassifier(random_state=25,
+                                           min_weight_fraction_leaf=0.3,
+                                           min_samples_split=7,
+                                           max_features='auto',
+                                           max_depth=9,
+                                           class_weight='balanced',
+                                           criterion='gini')
+            result['model'] = 'RandomForest'
+        else:
             return {}, [], []
 
         time_start = time.time()
