@@ -27,7 +27,7 @@ class ModelBuilder:
         self.labels_header = labels_header
         self.labels = labels
 
-    def get_result(self) -> (dict, List[int], List[int], List[int], List[int]):
+    def get_result(self) -> dict:
         error, x, y, x_un, y_un = self.prepare_data()
         if error:
             print('Something went wrong', error)
@@ -167,7 +167,7 @@ class ModelBuilder:
             predicted=predicted_unbalanced,
             real=y[2])
 
-        return result, predicted_balanced, y[1], predicted_unbalanced, y[2]
+        return result
 
     @staticmethod
     def create_confusion_table(predicted: List[int], real: List[int]) -> (int, int, int, int):

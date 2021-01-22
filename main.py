@@ -38,7 +38,7 @@ def main(model, preprocessing_types, in_file, result_directory):
                                separator=',',
                                labels_header='Sales'
                                )
-        results, pred_balanced, real_balanced, pred_unbalanced, real_unbalanced = builder.get_result()
+        results = builder.get_result()
         print(results)
     d = {
         "filename": "data_set_1",

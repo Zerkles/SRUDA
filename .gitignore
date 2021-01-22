@@ -141,3 +141,5 @@ data/criteo/CriteoSearchData
 !data/feature_selected_data/**
 !data/feature_selected_data/test_set.csv
 !data/feature_selected_data/imbalanced_set.csv
+
+catboost_info/*
