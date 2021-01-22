@@ -14,7 +14,9 @@ def do_preprocessing():
 @click.option('-m', '--model', 'model', required=True, multiple=True,
               type=click.Choice(['xgb', 'cat', 'reg', 'tree']), help='Models to train')
 @click.option('-b', '--balancing', 'balancing', required=False, multiple=True,
-              type=click.Choice(['ros', 'rus', 'smotenc']), help='Balancing method')
+              type=click.Choice(
+                  ['none', 'ros', 'smotenc', 'rus', 'nearmiss', 'edt', 'rep_edt', 'allknn', 'condensed', 'onesided',
+                   'neighbrhd', 'iht']), help='Balancing method')
 @click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
 @click.option('-uf', '--unbalanced-filepath', 'unbalanced_filepath', required=True, multiple=False,
               help='Path to unbalanced test dataset', default='data/criteo/criteo_40k.csv')

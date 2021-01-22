@@ -1,6 +1,6 @@
 import os
 
-from imblearn.metrics import geometric_mean_score
+from imblearn.metrics import geometric_mean_score, classification_report_imbalanced
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
 
@@ -12,8 +12,6 @@ import numpy as np
 from src.balancing import data_controller, oversampling, undersampling
 from src.balancing.data_controller import path_data_dir, path_balanced_csv
 import pandas as pd
-
-
 
 
 def train_and_score(X, y):
@@ -30,7 +28,7 @@ def train_and_score(X, y):
 
     y_pred = clf.predict(X_test)
     # print("Classification Report Imbalanced:\n", classification_report_imbalanced(y_test, y_pred))
-    # print(classification_report_imbalanced(y_test, y_pred))
+    print(classification_report_imbalanced(y_test, y_pred))
     print_metrics(y_test, y_pred)
 
     return geometric_mean_score(y_test, y_pred)
@@ -103,12 +101,13 @@ def check_if_new_categorical_features_generated(X, X_resampled):
         print("WARNING! New categorical features are generated!")
 
 
-def count_classes_size(y: pd.DataFrame):
-    # class_1_size = np.count_nonzero(y == 1)
-    # class_0_size = len(y) - class_1_size
-
-    class_1_size = len(y.loc[y["Sales"] == 1])
-    class_0_size = len(y) - class_1_size
+def count_classes_size(y):
+    if type(y) == pd.DataFrame:
+        class_1_size = len(y.loc[y["Sales"] == 1])
+        class_0_size = len(y) - class_1_size
+    else:
+        class_1_size = np.count_nonzero(y == 1)
+        class_0_size = len(y) - class_1_size
 
     return {0: class_0_size, 1: class_1_size}
 
@@ -125,8 +124,13 @@ def split_data_on_x_y(data: pd.DataFrame):
     return X, y
 
 
-def get_every_nth_element_of_list(L, percent_step):
-    step = int(percent_step * len(L))
+def get_every_nth_element_of_list(L, size_of_sublist):
+    if size_of_sublist >= len(L):
+        return L
+    elif type(len(L) / size_of_sublist) != int:
+        size_of_sublist -= 1
+
+    step = int(len(L) / size_of_sublist)
     if step == 0:
         step = 1
 
@@ -137,7 +141,9 @@ def resampler_selector(balancing_type, filepath):
     input_data = data_controller.get_feature_selected_data(filepath)
     X, y = split_data_on_x_y(input_data)
 
-    if balancing_type == 'ros':
+    if balancing_type == 'none':
+        return filepath, 'Sales', ','
+    elif balancing_type == 'ros':
         obj = oversampling.random_over_sampler_optimized()
     elif balancing_type == 'smotenc':
         if input_data.shape[0] > 10000:  # it just cant handle more than 10k samples because of ram
@@ -146,6 +152,22 @@ def resampler_selector(balancing_type, filepath):
         obj = oversampling.smotenc_optimized(X)
     elif balancing_type == 'rus':
         obj = undersampling.random_under_sampler_optimized()
+    elif balancing_type == 'nearmiss':
+        obj = undersampling.nearmiss_optimized()
+    elif balancing_type == 'edt':
+        obj = undersampling.edited_nearest_neighbours_optimized()
+    elif balancing_type == 'rep_edt':
+        obj = undersampling.repeated_edited_nearest_neighbours_optimized()
+    elif balancing_type == 'allknn':
+        obj = undersampling.allknn_optimized()
+    elif balancing_type == 'condensed':
+        obj = undersampling.condensed_nearest_neighbours_optimized()
+    elif balancing_type == 'onesided':
+        obj = undersampling.one_sided_selection_optimized()
+    elif balancing_type == 'neighbrhd':
+        obj = undersampling.neighbourhood_cleaning_rule_optimized()
+    elif balancing_type == 'iht':
+        obj = undersampling.instance_hardness_threshold_optimized()
     else:
         print("ERR")
         return None
