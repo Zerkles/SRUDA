@@ -12,7 +12,7 @@ def do_preprocessing():
 
 @click.command()
 @click.option('-m', '--model', 'model', required=True, multiple=True,
-              type=click.Choice(['xgb', 'cat', 'reg', 'tree']), help='Models to train')
+              type=click.Choice(['xgb', 'cat', 'reg', 'tree', 'for']), help='Models to train')
 @click.option('-b', '--balancing', 'balancing', required=False, multiple=True,
               type=click.Choice(['ros', 'rus', 'smotenc']), help='Balancing method')
 @click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
