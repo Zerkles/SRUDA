@@ -1,99 +1,66 @@
 import os
+import re
 
 from imblearn.metrics import geometric_mean_score, classification_report_imbalanced
-from imblearn.over_sampling import RandomOverSampler
-from imblearn.under_sampling import RandomUnderSampler
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import precision_score, balanced_accuracy_score
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-from src.balancing import data_controller, oversampling, undersampling
-from src.balancing.data_controller import path_data_dir, path_balanced_csv
+from src.balancing import data_controller, oversampling, undersampling, multiclass_resampling
 import pandas as pd
 
 
-def train_and_score(X, y):
-    if "Sales" in list(X.columns):
-        print(X.columns, y.columns)
-
+def train_and_score(X: pd.DataFrame, y: pd.DataFrame):
     X = X.values
     y = y.values.ravel()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-    clf = RandomForestClassifier(max_depth=2, random_state=0, n_jobs=-1)
-
+    clf = RandomForestClassifier(random_state=0, n_jobs=-1)
     clf.fit(X_train, y_train)
 
     y_pred = clf.predict(X_test)
-    # print("Classification Report Imbalanced:\n", classification_report_imbalanced(y_test, y_pred))
+    print('Classes size:', count_classes_size(y))
     print(classification_report_imbalanced(y_test, y_pred))
-    print_metrics(y_test, y_pred)
 
     return geometric_mean_score(y_test, y_pred)
 
 
-def percent_change(original, value):
-    return round((value - original) / original * 100, 2)
-
-
-def resample_and_write_to_csv(obj, X, y, name=None):
-    if name is None:
-        name = obj.__str__().split("(")[0]
-
-    X_resampled, y_resampled = obj.fit_resample(X, y)
-    # print("Classes size:", count_classes_size(y_resampled))
-
-    write_df = X_resampled
-    write_df["Sales"] = y_resampled
-
-    filepath = path_balanced_csv + "/" + name + ".csv"
-
-    write_df.to_csv(filepath, index=False)
-    print("Balanced:", name, '\n')
-
-    return filepath
-
-
-def train_all_from_csv():
-    for filename in os.listdir(path_balanced_csv):
-        if filename == ".gitignore":
+def train_all_from_dir(filepath_balanced_dir: str):
+    for filename in os.listdir(filepath_balanced_dir):
+        if not filename.endswith('.csv'):
             continue
-        path_file = path_balanced_csv + '/' + filename
-        print("Training:", filename[:-4])
+
+        path_file = filepath_balanced_dir + '/' + filename
+        print("Training:", filename.replace('.csv', ''))
         df = pd.read_csv(
             filepath_or_buffer=path_file,
             sep=',',
             index_col=0,
             low_memory=False)
 
-        df_columns = list(df.columns)
-        df_columns.remove("Sales")
-        X_resampled = df[df_columns]
-        y_resampled = df["Sales"]
+        X_resampled, y_resampled = split_data_on_x_y(df)
         train_and_score(X_resampled, y_resampled)
 
 
-def print_metrics(y_true, y_pred):
-    from imblearn.metrics import classification_report_imbalanced, sensitivity_specificity_support, sensitivity_score, \
-        specificity_score, geometric_mean_score, make_index_balanced_accuracy
+def resample_and_write_to_csv(obj, X, y, filepath_destination: str, name: str = None):
+    if name is None:
+        name = obj.__str__().split("(")[0]
 
-    print("Geometric Mean Score:", geometric_mean_score(y_true, y_pred))
-    print("Precision Score:", precision_score(y_true, y_pred))
-    print("Sensitivity Core (Recall):", sensitivity_score(y_true, y_pred))
-    print("Balanced Accuracy Score:", balanced_accuracy_score(y_true, y_pred))
+    X_resampled, y_resampled = obj.fit_resample(X, y)
 
-    # print("Specificity Score:", specificity_score(y_true, y_pred))
-    # print("Make Index Balanced Accuracy:", make_index_balanced_accuracy(y_true, y_pred))
+    balanced_df = X_resampled
+    balanced_df["Sales"] = y_resampled
 
-    # print("Classification Report Imbalanced:\n", classification_report_imbalanced(y_true, y_pred))
-    # print("Sensitivity Specifity Support:", sensitivity_specificity_support(y_true, y_pred))
+    filepath_balanced = f"{filepath_destination}/{name}.csv"
 
-    print("\n")
+    balanced_df.to_csv(filepath_balanced, index=False)
+    print("Balanced:", name)
+
+    return filepath_balanced
 
 
-def check_if_new_categorical_features_generated(X, X_resampled):
+def check_if_new_categorical_features_generated(X: np.ndarray, X_resampled: np.ndarray):
     # print("Unique product id count in original data:", len(X["product_id"].unique()),
     #       "Unique product id count in resampled data:", len(X_resampled["product_id"].unique()))
 
@@ -114,7 +81,7 @@ def count_classes_size(y):
 
 def split_data_on_x_y(data: pd.DataFrame):
     features_dict = dict(zip(list(data.columns), range(len(data.columns))))
-    for key in ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion']:  # outcome labels
+    for key in ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion']:  # remove outcome labels
         if key in features_dict.keys():
             features_dict.pop(key)
 
@@ -124,25 +91,27 @@ def split_data_on_x_y(data: pd.DataFrame):
     return X, y
 
 
-def get_every_nth_element_of_list(L, size_of_sublist):
-    if size_of_sublist >= len(L):
-        return L
-    elif type(len(L) / size_of_sublist) != int:
-        size_of_sublist -= 1
+def get_n_elements_of_list(original_list: list, n_elements: int):
+    if n_elements >= len(original_list):
+        return original_list
+    elif type(len(original_list) / n_elements) != int:
+        n_elements -= 1
 
-    step = int(len(L) / size_of_sublist)
+    step = int(len(original_list) / n_elements)
     if step == 0:
         step = 1
 
-    return L[::step]
+    return original_list[::step]
 
 
-def resampler_selector(balancing_type, filepath):
-    input_data = data_controller.get_feature_selected_data(filepath)
+def resampler_selector(balancing_type: str, filepath_source: str):
+    input_data = data_controller.get_categorized_criteo(filepath_source)
     X, y = split_data_on_x_y(input_data)
 
+    filepath_destination = re.sub('\w+.csv', '', filepath_source) + '../balanced_csv'
+
     if balancing_type == 'none':
-        return filepath, 'Sales', ','
+        return filepath_source, 'Sales', ','
     elif balancing_type == 'ros':
         obj = oversampling.random_over_sampler_optimized()
     elif balancing_type == 'smotenc':
@@ -154,21 +123,23 @@ def resampler_selector(balancing_type, filepath):
         obj = undersampling.random_under_sampler_optimized()
     elif balancing_type == 'nearmiss':
         obj = undersampling.nearmiss_optimized()
-    elif balancing_type == 'edt':
+    elif balancing_type == 'enn':
         obj = undersampling.edited_nearest_neighbours_optimized()
-    elif balancing_type == 'rep_edt':
+    elif balancing_type == 'renn':
         obj = undersampling.repeated_edited_nearest_neighbours_optimized()
     elif balancing_type == 'allknn':
         obj = undersampling.allknn_optimized()
-    elif balancing_type == 'condensed':
-        obj = undersampling.condensed_nearest_neighbours_optimized()
     elif balancing_type == 'onesided':
         obj = undersampling.one_sided_selection_optimized()
-    elif balancing_type == 'neighbrhd':
+    elif balancing_type == 'ncr':
         obj = undersampling.neighbourhood_cleaning_rule_optimized()
     elif balancing_type == 'iht':
         obj = undersampling.instance_hardness_threshold_optimized()
+    elif balancing_type == 'globalcs':
+        obj = multiclass_resampling.global_cs_optimized()
+    elif balancing_type == 'soup':
+        obj = multiclass_resampling.soup_optimized()
     else:
         print("ERR")
         return None
-    return resample_and_write_to_csv(obj, X, y), list(y.columns)[0], ','
+    return resample_and_write_to_csv(obj, X, y, filepath_destination), list(y.columns)[0], ','

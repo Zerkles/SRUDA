@@ -15,8 +15,8 @@ def do_preprocessing():
               type=click.Choice(['xgb', 'cat', 'reg', 'tree', 'for']), help='Models to train')
 @click.option('-b', '--balancing', 'balancing', required=False, multiple=True,
               type=click.Choice(
-                  ['none', 'ros', 'smotenc', 'rus', 'nearmiss', 'edt', 'rep_edt', 'allknn', 'condensed', 'onesided',
-                   'neighbrhd', 'iht']), help='Balancing method')
+                  ['none', 'ros', 'smotenc', 'rus', 'nearmiss', 'enn', 'renn', 'allknn', 'onesided',
+                   'ncr', 'iht', 'globalcs', 'soup']), help='Balancing method')
 @click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
 @click.option('-uf', '--unbalanced-filepath', 'unbalanced_filepath', required=True, multiple=False,
               help='Path to unbalanced test dataset', default='data/criteo/criteo_40k.csv')
@@ -27,9 +27,9 @@ def main(model, balancing, in_file, result_directory, unbalanced_filepath):
     Bachelor Thesis project.\n
     SRUDA - System for Rating Unbalanced Data Algorithms.\n
     Example run:\n
-    ./main.py -m xgb -i data.csv\n
-    ./main.py -m xgb -m tree -i data2.csv\n
-    ./main.py -m reg -i data.csv -o some_results.csv\n
+    ./balancing_main.py -m xgb -i data.csv\n
+    ./balancing_main.py -m xgb -m tree -i data2.csv\n
+    ./balancing_main.py -m reg -i data.csv -o some_results.csv\n
     """
     print(model, in_file, result_directory)
     # preprocessing
