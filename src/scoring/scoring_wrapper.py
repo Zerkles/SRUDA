@@ -116,7 +116,7 @@ def parse_scores_dict(scores_file, balancing_type='balanced', precision="{:.6f}"
 
     for x in cols_data.keys():
         df = pd.DataFrame.from_dict(cols_data[x], orient='index', columns=column_labels[x])
-        dict_of_results[x] = df
+        dict_of_results[x] = df.transpose()
 
     #     don't ask me how it works, but it does
     return dict_of_results
