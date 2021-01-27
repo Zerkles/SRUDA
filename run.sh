@@ -1,4 +1,3 @@
-echo 40k
-~/anaconda3/envs/inz/bin/python ~/Documents/politechnika/SRUDA/main.py -m $1 -i data/criteo/criteo_40k.csv
-echo 200k
-~/anaconda3/envs/inz/bin/python ~/Documents/politechnika/SRUDA/main.py -m $1 -i data/criteo/criteo_200k.csv
+python3 main.py -m for -b none -b ros -b smotenc -b rus -b nearmiss -b enn -b renn -b allknn -b onesided -b ncr -b iht -b globalcs -b soup -i data/feature_selected_data/imbalance_set_no_price.csv -uf data/feature_selected_data/test_set.csv -bd data/balanced_csv
+#python3 -m forest -b ros -b rus -i data/feature_selected_data/imbalance_set.csv -uf data/feature_selected_data/test_set.csv -bd data/balanced_csv
+#python3 main.py -m forest -i data/feature_selected_data/imbalance_set.csv -uf data/feature_selected_data/test_set.csv -bd data/balanced_csv
