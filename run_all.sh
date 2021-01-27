@@ -1,1 +1,0 @@
-python3 -W ignore main.py -m xgb -m cat -m reg -m forest -b none -b ros -b rus -b smotenc -b ros -b rus -b nearmiss -b enn -b renn -b allknn -b onesided -b ncr -b iht -b globalcs -b soup -i data/feature_selected_data/imbalance_set.csv -uf data/feature_selected_data/test_set.csv -bd data/balanced_csv
