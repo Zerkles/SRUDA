@@ -36,7 +36,7 @@ params = {
 
 model = xg.XGBClassifier(use_label_encoder=False, verbosity=0, booster='gbtree')
 
-search = GridSearchCV(estimator=model, param_grid=params, scoring='f1', cv=2, verbose=100, n_jobs=-1)
+search = GridSearchCV(estimator=model, param_grid=params, scoring='recall', cv=2, verbose=100, n_jobs=-1)
 
 search.fit(X, y)
 print(search)
