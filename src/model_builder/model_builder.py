@@ -131,13 +131,15 @@ class ModelBuilder:
                                            criterion='gini')
             result['model'] = 'tree'
         elif self.model_name == 'forest':
-            model = RandomForestClassifier(random_state=25,
-                                           min_weight_fraction_leaf=0.3,
-                                           min_samples_split=7,
+            model = RandomForestClassifier(random_state=4,
+                                           min_weight_fraction_leaf=0.1,
+                                           min_samples_split=0.7,
                                            max_features='auto',
-                                           max_depth=9,
-                                           class_weight='balanced',
-                                           criterion='gini')
+                                           max_depth=10,
+                                           class_weight='balanced_subsample',
+                                           criterion='gini',
+                                           n_estimators=200,
+                                           bootstrap=True)
             result['model'] = 'RandomForest'
         else:
             return {}, [], []

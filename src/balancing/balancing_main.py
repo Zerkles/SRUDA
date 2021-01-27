@@ -53,7 +53,7 @@ def balance_all_methods(filepath_source):
 
 
 if __name__ == '__main__':
-    filepath = '../../data/feature_selected_data/imbalance_set.csv'
+    filepath = '../../data/no_price_feature_selected/imbalance_set_no_price.csv'
     data = DataController.read_categorized_criteo(filepath)
     X, y = DataController.split_data_on_x_y(data)
     print("No balancing:")
