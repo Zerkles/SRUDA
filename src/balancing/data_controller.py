@@ -1,159 +1,119 @@
-import os
 import pickle
-
+import pandas as pd
 import numpy as np
 
-import pandas as pd
 
-header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_timestamp',
-          'nb_clicks_1week', 'product_price', 'product_age_group', 'device_type', 'audience_id',
-          'product_gender', 'product_brand', 'product_category1', 'product_category2', 'product_category3',
-          'product_category4', 'product_category5', 'product_category6', 'product_category7', 'product_country',
-          'product_id', 'product_title', 'partner_id', 'user_id']
+class DataController:
 
-# path_data_dir = '../../data'
-path_data_dir = 'data'
-path_data_original_criteo = path_data_dir + '/criteo/CriteoSearchData'
-path_categorized_criteo = path_data_dir + '/criteo/CriteoSearchDataCategorized.csv'
-path_feature_selected = path_data_dir + '/feature_selected_data/imbalance_set.csv'
-path_labelEncoderDict = path_data_dir + '/criteo/' + "LabelEncoderDict.pickle"
-path_balanced_csv = path_data_dir + "/balanced_csv"
+    @staticmethod
+    def get_raw_criteo(filepath: str, rows_count: int = -1) -> pd.DataFrame:
 
+        header = ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion', 'click_timestamp',
+                  'nb_clicks_1week', 'product_price', 'product_age_group', 'device_type', 'audience_id',
+                  'product_gender', 'product_brand', 'product_category1', 'product_category2', 'product_category3',
+                  'product_category4', 'product_category5', 'product_category6', 'product_category7', 'product_country',
+                  'product_id', 'product_title', 'partner_id', 'user_id']
 
-def fun(x):
-    if type(x) is int or type(x) is float:
-        return x
-    try:
-        return np.float64((int(x, 16) >> 64))
-    except TypeError as e:
-        print(x)
-        print(e)
+        if rows_count != -1:
+            return pd.read_csv(
+                filepath_or_buffer=filepath,
+                nrows=rows_count,
+                sep='\t',
+                index_col=False,
+                low_memory=False,
+                names=header
+            )
+        else:
+            return pd.read_csv(
+                filepath_or_buffer=filepath,
+                sep='\t',
+                index_col=False,
+                low_memory=False,
+                names=header
+            )
 
-
-def fun2(x):
-    return x.apply(fun)
-
-
-def hex_to_float64(data: pd.DataFrame):
-    for col in data.columns:
-        if str(data[col].dtype) == 'object':
-            data[col].apply(lambda x: int(x, 16) >> 64)
-
-
-def get_pure_data(rows_count=-1):  # from raw data
-    if rows_count != -1:
-        return pd.read_csv(
-            filepath_or_buffer=path_data_original_criteo,
-            nrows=rows_count,
-            sep='\t',
-            index_col=False,
-            low_memory=False,
-            names=header
-        )
-    else:
-        return pd.read_csv(
-            filepath_or_buffer=path_data_original_criteo,
-            sep='\t',
-            index_col=False,
-            # low_memory=False,
-            names=header
-        )
-
-
-def get_converted_data(rows_count=-1):
-    data = get_pure_data(rows_count)
-
-    # convert hex to float
-    hex_to_float64(data)
-    data = data.apply(fun2)
-
-    data[np.isnan(data)] = 0
-    data[np.isinf(data)] = np.finfo(np.float64).max
-
-    return data
-
-
-def get_categorized_data(rows_count: int = -1) -> pd.DataFrame:
-    if rows_count != -1:
-        return pd.read_csv(
-            filepath_or_buffer=path_categorized_criteo,
-            nrows=rows_count,
-            sep=',',
-            index_col=False,
-            low_memory=False,
-        )
-    return pd.read_csv(
-        filepath_or_buffer=path_categorized_criteo,
-        sep=',',
-        index_col=False,
-        low_memory=False,
-    )
-
-
-def get_feature_selected_data(filepath, rows_count: int = -1) -> pd.DataFrame:
-    if rows_count != -1:
+    @staticmethod
+    def read_categorized_criteo(filepath: str, rows_count: int = -1) -> pd.DataFrame:
+        if rows_count != -1:
+            return pd.read_csv(
+                filepath_or_buffer=filepath,
+                nrows=rows_count,
+                sep=',',
+                index_col=False,
+                low_memory=False,
+            )
         return pd.read_csv(
             filepath_or_buffer=filepath,
-            nrows=rows_count,
             sep=',',
             index_col=False,
             low_memory=False,
         )
-    return pd.read_csv(
-        filepath_or_buffer=filepath,
-        sep=',',
-        index_col=False,
-        low_memory=False,
-    )
 
+    @staticmethod
+    def encode_criteo(filepath_criteo: str, filepath_categorized_criteo: str, filepath_label_encoder: str):
+        from sklearn.preprocessing import LabelEncoder
 
-def label_data():
-    from sklearn.preprocessing import LabelEncoder
+        df = DataController.get_raw_criteo(filepath_criteo)
 
-    df = get_pure_data()
+        label_encoder_dict = {'product_age_group': LabelEncoder(),
+                              'device_type': LabelEncoder(),
+                              'audience_id': LabelEncoder(),
+                              'product_gender': LabelEncoder(),
+                              'product_brand': LabelEncoder(),
+                              'product_category1': LabelEncoder(),
+                              'product_category2': LabelEncoder(),
+                              'product_category3': LabelEncoder(),
+                              'product_category4': LabelEncoder(),
+                              'product_category5': LabelEncoder(),
+                              'product_category6': LabelEncoder(),
+                              'product_category7': LabelEncoder(),
+                              'product_country': LabelEncoder(),
+                              'product_id': LabelEncoder(),
+                              'product_title': LabelEncoder(),
+                              'partner_id': LabelEncoder(),
+                              'user_id': LabelEncoder()}
 
-    label_encoder_dict = {'product_age_group': LabelEncoder(),
-                          'device_type': LabelEncoder(),
-                          'audience_id': LabelEncoder(),
-                          'product_gender': LabelEncoder(),
-                          'product_brand': LabelEncoder(),
-                          'product_category1': LabelEncoder(),
-                          'product_category2': LabelEncoder(),
-                          'product_category3': LabelEncoder(),
-                          'product_category4': LabelEncoder(),
-                          'product_category5': LabelEncoder(),
-                          'product_category6': LabelEncoder(),
-                          'product_category7': LabelEncoder(),
-                          'product_country': LabelEncoder(),
-                          'product_id': LabelEncoder(),
-                          'product_title': LabelEncoder(),
-                          'partner_id': LabelEncoder(),
-                          'user_id': LabelEncoder()}
+        for title in df["product_category7"].unique():
+            if type(title) != str:
+                print(type(title), title)
+        df["product_title"] = df["product_title"].astype(str)
+        df["product_category7"] = df["product_category7"].astype(str)
 
-    for title in df["product_category7"].unique():
-        if type(title) != str:
-            print(type(title), title)
-    df["product_title"] = df["product_title"].astype(str)
-    df["product_category7"] = df["product_category7"].astype(str)
+        for key in label_encoder_dict.keys():
+            label_encoder_dict[key].fit(df[key])
+            df[key] = label_encoder_dict[key].transform(df[key])
 
-    for key in label_encoder_dict.keys():
-        print("Labeling:", key)
-        label_encoder_dict[key].fit(df[key])
-        df[key] = label_encoder_dict[key].transform(df[key])
+        df.to_csv(filepath_categorized_criteo, index=False)
+        pickle.dump(label_encoder_dict, open(filepath_label_encoder, "wb"))
 
-    df.to_csv(path_categorized_criteo, index=False)
-    pickle.dump(label_encoder_dict, open(path_labelEncoderDict, "wb"))
+    @staticmethod
+    def decode_criteo(df: pd.DataFrame, filepath_label_encoder: str) -> pd.DataFrame:
+        label_encoder_dict = pickle.load(open(filepath_label_encoder, "rb"))
 
+        for key in label_encoder_dict.keys():
+            df[key] = label_encoder_dict[key].inverse_transform(df[key])
 
-def delabel_data(df: pd.DataFrame) -> pd.DataFrame:
-    label_encoder_dict = pickle.load(open(path_labelEncoderDict, "rb"))
+        return df
 
-    for key in label_encoder_dict.keys():
-        print("Delabeling:", key)
-        df[key] = label_encoder_dict[key].inverse_transform(df[key])
+    @staticmethod
+    def split_data_on_x_y(data: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
+        features_dict = dict(zip(list(data.columns), range(len(data.columns))))
+        for key in ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion']:  # remove outcome labels
+            if key in features_dict.keys():
+                features_dict.pop(key)
 
-    return df
+        X = data[list(features_dict.keys())]
+        y = pd.DataFrame(data['Sales'], columns=["Sales"])
 
+        return X, y
 
-if __name__ == '__main__':
-    label_data()
+    @staticmethod
+    def count_classes_size(y) -> dict:
+        if type(y) == pd.DataFrame:
+            class_1_size = len(y.loc[y["Sales"] == 1])
+            class_0_size = len(y) - class_1_size
+        else:
+            class_1_size = np.count_nonzero(y == 1)
+            class_0_size = len(y) - class_1_size
+
+        return {0: class_0_size, 1: class_1_size}
