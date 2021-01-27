@@ -36,7 +36,7 @@ class PreProcessing:
                      'user_id': LabelEncoder()}
 
     def load_data(self, file_path, load_fraction):
-        print(" Data loading started ... ")
+        print(" Data loading started ")
         lines_to_read = round(15995634 * load_fraction)
         lines = np.empty([lines_to_read, self.number_of_columns + 1], dtype=object)
         with open(file_path) as file:
@@ -44,8 +44,7 @@ class PreProcessing:
                 if x % 100000 == 0:
                     print(x)
                 lines[x] = file.readline().rstrip("\n").split(",")
-        print(" Data loading finished . Loaded rows")
-        #print(lines)
+        print(" Loaded "+str(lines_to_read)+" lines")
         return lines
 
     def load_data_by_chunks(self, file_path, chunk_fraction):
@@ -81,7 +80,7 @@ class PreProcessing:
 
         return data
 
-    def matrix_features(self,features,matrix):
+    def matrix_features(self,features,matrix,path_data_dir):
         array_of_index=[1]
         for feature in features:
             if feature in columns:
@@ -90,15 +89,15 @@ class PreProcessing:
         matrix_features=matrix[:,array_of_index]  
         print(features)
         print(matrix_features[0])
-        self.numpy_to_csv(matrix_features,data_controller.path_data_dir+"/criteo/matrix_features.csv")
+        self.numpy_to_csv(matrix_features,path_data_dir+"/criteo/matrix_features.csv")
         return matrix_features
 
-    def split_data_to_test_and_balance_set(self,matrix,test_size,balance_size): #splits dataset to testset and set to balance
+    def split_data_to_test_and_balance_set(self,matrix,test_size,balance_size,path_data_dir): #splits dataset to testset and set to balance
         print(matrix[0,:])
         test_set=np.vstack((matrix[0],matrix[-test_size:]))
         imbalance_set=matrix[:balance_size]
-        self.numpy_to_csv(test_set,data_controller.path_data_dir+"/criteo/test_set.csv")
-        self.numpy_to_csv(imbalance_set,data_controller.path_data_dir+"/criteo/imbalance_set.csv")
+        self.numpy_to_csv(test_set,path_data_dir+"/criteo/test_set.csv")
+        self.numpy_to_csv(imbalance_set,path_data_dir+"/criteo/imbalance_set.csv")
         return test_set, imbalance_set
 
 
@@ -136,15 +135,16 @@ features = Features()
 test = PreProcessing()
 analysis = Analysis()
 ##labelEncoders = pickle.load(open("E:\inz\criteo\criteo\lablencoder.pickle","rb"))
-
+path_data_dir="././data"
 # test.analyze_data(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv",1))
-matrix=test.load_data(data_controller.path_categorized_criteo,1)
+matrix=test.load_data(path_data_dir+"/criteo/CriteoSearchDataCategorized.csv",1)
 #X, Y =test.get_X_and_Y(matrix)
 #features_selected=Features.select_features_select_from_model_LR(X, Y, columns[3:], 10000)
 #print(test.matrix_features(features_selected,matrix))
 #features_choosen=test.choose_feature(["sfm_lr","rle_lr","sfm_linearsvc","rle_linearsvc","permutation_rfc","permutation_lasso"],X,Y,columns[3:],10000)
 #print(features_choosen)
-#features_choosen=[ 'click_timestamp', 'nb_clicks_1week', 'product_price', 'audience_id','product_brand', "product_category3", "product_category4","product_category5","product_category6", "product_country","product_id", "partner_id"]
-#test.split_data_to_test_and_balance_set(test.matrix_features(features_choosen,matrix),40000,100000)
-analysis.displot(matrix,[1])
+#features_choosen=[ 'click_timestamp', 'nb_clicks_1week', 'audience_id','product_brand', "product_category3", "product_category4","product_category5","product_category6", "product_country","product_id", "partner_id"]
+#test.split_data_to_test_and_balance_set(test.matrix_features(features_choosen,matrix,path_data_dir),40000,100001,path_data_dir)
+analysis.check_Sale_Product_price_diffrence(matrix)
+#analysis.nb_clicks_1week_displot(matrix)
 # test.numpy_to_csv(test.load_data("E:\inz\criteo\criteo\csv\criteoCategorized_as_category.csv", 0.01))
