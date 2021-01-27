@@ -130,7 +130,7 @@ class ModelBuilder:
                                            class_weight='balanced',
                                            criterion='gini')
             result['model'] = 'tree'
-        elif self.model_name == 'for':
+        elif self.model_name == 'forest':
             model = RandomForestClassifier(random_state=25,
                                            min_weight_fraction_leaf=0.3,
                                            min_samples_split=7,
