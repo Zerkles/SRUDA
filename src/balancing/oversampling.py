@@ -2,7 +2,7 @@ from imblearn.over_sampling import RandomOverSampler, SMOTENC
 
 
 def random_over_sampler_optimized():
-    return RandomOverSampler(sampling_strategy='auto', random_state=0)
+    return RandomOverSampler()
 
 
 def smotenc_optimized(X_columns_names: list):

@@ -142,3 +142,4 @@ catboost_info/
 !data/feature_selected_data/imbalanced_set.csv
 /catboost_info/
 src/balancing/balancing_main.py
+run.sh

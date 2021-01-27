@@ -96,7 +96,7 @@ class DataController:
         return df
 
     @staticmethod
-    def split_data_on_x_y(data: pd.DataFrame) -> (pd.Dataframe, pd.DataFrame):
+    def split_data_on_x_y(data: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
         features_dict = dict(zip(list(data.columns), range(len(data.columns))))
         for key in ['Sales', 'SalesAmountInEuro', 'time_delay_for_conversion']:  # remove outcome labels
             if key in features_dict.keys():
