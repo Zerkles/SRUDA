@@ -2,7 +2,7 @@ from imblearn.over_sampling import RandomOverSampler, SMOTENC
 
 
 def random_over_sampler_optimized():
-    return RandomOverSampler()
+    return RandomOverSampler(sampling_strategy='auto', random_state=0)
 
 
 def smotenc_optimized(X_columns_names: list):
@@ -11,4 +11,4 @@ def smotenc_optimized(X_columns_names: list):
         if key in features_dict.keys():
             features_dict.pop(key)
 
-    return SMOTENC(categorical_features=list(features_dict.values()), k_neighbors=10, n_jobs=-1)
+    return SMOTENC(categorical_features=list(features_dict.values()), k_neighbors=49, n_jobs=-1)

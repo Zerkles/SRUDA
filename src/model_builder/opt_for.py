@@ -4,39 +4,40 @@ from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import time
 
+from src.balancing.data_controller import DataController
+
 start = time.time()
-data = pd.read_csv('../../data/no_price_feature_selected/RandomUnderSampler.csv')
-head = 'click_timestamp,nb_clicks_1week,audience_id,product_brand,product_category3,product_category4,product_category5,product_category6,product_country,product_id,partner_id'.split(
-    ',')
-print(head)
+data = DataController.read_categorized_criteo('../../data/balanced_csv/RandomUnderSampler.csv')
+X, y = DataController.split_data_on_x_y(data)
 
-X = data.loc[:, head]
-y = data['Sales']
+X = X.values
+y = y.values.ravel()
 
-X[np.isnan(X)] = 0
+depths = [None, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-default_params = {'bootstrap': True, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': None,
-                  'max_features': 'auto', 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0,
-                  'min_impurity_split': None, 'min_samples_leaf': 1, 'min_samples_split': 2,
-                  'min_weight_fraction_leaf': 0.0, 'n_estimators': 100, 'n_jobs': None, 'oob_score': False,
-                  'random_state': None, 'verbose': 0, 'warm_start': False}
+min_sample_splits = [x / 10 for x in range(1, 9)] + [x for x in range(1, 10)]
+
+max_features = ['auto', 'sqrt', 'log2']
 
 params = {
-    'bootstrap': [True],
-    'criterion': ['gini'],
-    'max_depth': [x for x in range(5, 15)],
-    'max_features': ['auto'],
-    'n_estimators': [x for x in range(50, 150, 10)],
-    'min_samples_split': [x for x in range(5)],
-    'min_samples_leaf': [x for x in range(5)]
+    'criterion': ['gini', 'entropy'],
+    'max_depth': depths,
+    'min_samples_split': min_sample_splits,
+    'min_weight_fraction_leaf': [x / 10 for x in range(1, 5)],
+    'max_features': max_features,
+    'random_state': np.arange(0, 50, 1),
+    'n_estimators': np.arange(100, 300, 50),
+    'bootstrap': [True, False],
+    'class_weight': ['balanced', 'balanced_subsample']
 }
 
 model = RandomForestClassifier()
 print(model)
 
+# search = GridSearchCV(estimator=model, param_grid=params, scoring='recall', cv=2, verbose=100, n_jobs=-1)
 search = RandomizedSearchCV(estimator=model, param_distributions=params, scoring=['recall', 'balanced_accuracy'],
-                            n_iter=1000, cv=3,
-                            verbose=100, n_jobs=-1, refit='recall')
+                            refit='balanced_accuracy', n_iter=1000, cv=3,
+                            verbose=100, n_jobs=-1)
 search.fit(X, y)
 
 print('============================')

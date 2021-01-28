@@ -7,11 +7,14 @@ import matplotlib.pyplot as plt
 
 
 def global_cs_optimized():
-    return GlobalCS()
+    return GlobalCS(shuffle=True)
 
 
 def soup_optimized():
-    return SOUP()
+    return SOUP(k=850, shuffle=True, maj_int_min={
+        'maj': [0],  # indices of majority classes
+        'min': [1],  # indices of minority classes
+    })
 
 
 def draw_plot(X: pd.DataFrame, y: pd.DataFrame, X_resampled: pd.DataFrame, y_resampled: pd.DataFrame, name: str,
