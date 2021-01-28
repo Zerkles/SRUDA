@@ -11,7 +11,7 @@ def global_cs_optimized():
 
 
 def soup_optimized():
-    return SOUP(k=137, shuffle=False, maj_int_min={
+    return SOUP(k=850, shuffle=True, maj_int_min={
         'maj': [0],  # indices of majority classes
         'min': [1],  # indices of minority classes
     })

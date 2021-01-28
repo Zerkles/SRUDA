@@ -3,16 +3,13 @@ import numpy as np
 import xgboost as xg
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
-data = pd.read_csv('../../data/criteo/balanced.csv', sep=',')
-head = 'user_id,partner_id,nb_clicks_1week,product_price,product_age_group,device_type,audience_id,product_gender,click_timestamp,product_id,product_country,product_brand,product_title,product_category6,product_category5,Sales'.split(',')
-print(head)
+from src.balancing.data_controller import DataController
 
-X = data.loc[:, head]
-y = data['Sales']
+data = DataController.read_categorized_criteo('../../data/balanced_csv/RandomUnderSampler.csv')
+X, y = DataController.split_data_on_x_y(data)
 
-X = X.to_numpy()
-y = y.to_numpy()
-house_dmatrix = xg.DMatrix(data=X, label=y)
+X = X.values
+y = y.values.ravel()
 
 base_params = {
     'learning_rate': np.arange(0.001, 0.2, 0.001),
@@ -45,4 +42,4 @@ print(search.best_score_)
 print(np.sqrt(np.abs(search.best_score_)))
 
 print('Best params:')
-print('f1:\t', search.best_params_)
+print(search.best_params_)

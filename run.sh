@@ -1,3 +1,3 @@
-python3 main.py -m forest -b none -b ros -b smotenc -b rus -b nearmiss -b enn -b renn -b allknn -b onesided -b ncr -b iht -b globalcs -b soup -i data/no_price_feature_selected/imbalance_set_no_price.csv -uf data/no_price_feature_selected/test_set_no_price.csv -bd data/balanced_csv
+python3 main.py -m xgb -b none -b ros -b smotenc -b rus -b nearmiss -b enn -b renn -b allknn -b onesided -b ncr -b iht -b globalcs -b soup -i data/no_price_feature_selected/imbalance_set_no_price.csv -uf data/no_price_feature_selected/test_set_no_price.csv -bd data/balanced_csv
 #python3 -m forest -b ros -b rus -i data/feature_selected_data/imbalance_set.csv -uf data/feature_selected_data/test_set.csv -bd data/balanced_csv
 #python3 main.py -m forest -i data/feature_selected_data/imbalance_set.csv -uf data/feature_selected_data/test_set.csv -bd data/balanced_csv

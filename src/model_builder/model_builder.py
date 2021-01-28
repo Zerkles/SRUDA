@@ -86,17 +86,13 @@ class ModelBuilder:
         result = {}
 
         if self.model_name == 'xgb':
-            model = XGBClassifier(subsample=0.25,
-                                  n_estimators=270,
-                                  min_child_weight=3,
-                                  max_depth=7,
-                                  max_delta_step=4,
-                                  learning_rate=0.19,
-                                  gamma=6,
-                                  verbosity=0,
-                                  booster='gbtree',
-                                  n_jobs=-1,
-                                  use_label_encoder=False)
+            model = XGBClassifier(gamma=9,
+                                  learning_rate=0.003,
+                                  max_delta_step=1,
+                                  max_depth=6,
+                                  min_child_weight=7,
+                                  n_estimators=220,
+                                  subsample=0.8)
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
             model = CatBoostClassifier(loss_function='Logloss',
@@ -131,15 +127,15 @@ class ModelBuilder:
                                            criterion='gini')
             result['model'] = 'tree'
         elif self.model_name == 'forest':
-            model = RandomForestClassifier(random_state=4,
-                                           min_weight_fraction_leaf=0.1,
-                                           min_samples_split=0.7,
-                                           max_features='auto',
-                                           max_depth=10,
-                                           class_weight='balanced_subsample',
+            model = RandomForestClassifier(random_state=42,
+                                           min_weight_fraction_leaf=0.3,
+                                           min_samples_split=7,
+                                           max_features='sqrt',
+                                           max_depth=3,
+                                           class_weight='balanced',
                                            criterion='gini',
                                            n_estimators=200,
-                                           bootstrap=True)
+                                           bootstrap=False)
             result['model'] = 'RandomForest'
         else:
             return {}, [], []

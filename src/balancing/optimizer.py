@@ -2,7 +2,7 @@ import itertools
 import matplotlib.pyplot as plt
 from imblearn.metrics import geometric_mean_score
 
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.metrics import recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
@@ -119,6 +119,12 @@ class Optimizer:
                     variant['estimator'] = 'ABC'
                 elif variant['estimator'].__class__.__name__ == 'GradientBoostingClassifier':
                     variant['estimator'] = 'GBC'
+                elif variant['estimator'].__class__.__name__ == 'KNeighborsClassifier':
+                    variant['estimator'] = 'KNN'
+                elif variant['estimator'].__class__.__name__ == 'DecisionTreeClassifier':
+                    variant['estimator'] = 'DT'
+                elif variant['estimator'].__class__.__name__ == 'LogisticRegression':
+                    variant['estimator'] = 'LR'
 
             index = self.parameters_perm.index(variant)
             self.logs.update({index: {"params": variant, "gmean": geometric_mean_score(y_test, y_pred),
@@ -152,17 +158,19 @@ def get_n_elements_from_list(original_list: list, n_elements: int):
 
 if __name__ == "__main__":
     filepath_logs = "../../plots/"
-    filepath_data = '../../data/feature_selected_data/imbalance_set.csv'
+    filepath_data = '../../data/no_price_feature_selected/imbalance_set_no_price.csv'
 
-    res = Resampler('iht', filepath_data)
-    res.set_params(**{'sampling_strategy': 'auto', 'random_state': 0, 'n_jobs': -1})  # setting common params
+    res = Resampler('soup', filepath_data)
+    res.set_params(**{'maj_int_min': {
+        'maj': [0],  # indices of majority classes
+        'min': [1],  # indices of minority classes
+    }})  # setting common params
 
     max_n_neighbors = DataController.count_classes_size(res.y_unbalanced)[1] - 1
 
     value_dict = {
-        "estimator": [AdaBoostClassifier(random_state=0),
-                      GradientBoostingClassifier(random_state=0)],
-        "cv": get_n_elements_from_list(list(range(2, 8)), 11)
+        'k': get_n_elements_from_list(list(range(1400, 1500 + 1)), 25),
+        'shuffle': [True, False]
     }
 
     opt = Optimizer(res, filepath_logs)
