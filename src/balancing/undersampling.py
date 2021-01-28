@@ -4,7 +4,7 @@ from imblearn.under_sampling import RandomUnderSampler, NearMiss, EditedNearestN
 
 
 def random_under_sampler_optimized():
-    return RandomUnderSampler()
+    return RandomUnderSampler(sampling_strategy='auto', random_state=0)
 
 
 def nearmiss_optimized():
@@ -24,7 +24,7 @@ def allknn_optimized():
 
 
 def one_sided_selection_optimized():
-    return OneSidedSelection(n_jobs=-1)
+    return OneSidedSelection(random_state=0, n_jobs=-1)
 
 
 def neighbourhood_cleaning_rule_optimized():
@@ -32,4 +32,4 @@ def neighbourhood_cleaning_rule_optimized():
 
 
 def instance_hardness_threshold_optimized():
-    return InstanceHardnessThreshold(n_jobs=-1)
+    return InstanceHardnessThreshold(random_state=0, n_jobs=-1)
