@@ -31,9 +31,8 @@ params = {
 
 model = LogisticRegression()
 print(model)
-
 search = RandomizedSearchCV(estimator=model, param_distributions=params, n_iter=30,
-                            scoring='f1', cv=4, verbose=100, n_jobs=-1)
+                            scoring='recall', cv=4, verbose=100, n_jobs=-1)
 
 search.fit(X, y)
 

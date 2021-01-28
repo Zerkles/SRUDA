@@ -13,14 +13,18 @@ def do_preprocessing():
 DEFAULT_SEPARATOR = ','
 DEFAULT_YLABEL = 'Sales'
 
+ALL_MODELS = ['xgb', 'cat', 'reg', 'forest']
+ALL_BALANCE = ['none', 'ros', 'smotenc', 'rus', 'nearmiss', 'enn', 'renn', 'allknn', 'onesided',
+               'ncr', 'iht', 'globalcs', 'soup']
+
 
 @click.command()
 @click.option('-m', '--model', 'model', required=True, multiple=True,
-              type=click.Choice(['xgb', 'cat', 'reg', 'tree', 'forest']), help='Models to train')
+              type=click.Choice(['xgb', 'cat', 'reg', 'tree', 'forest', 'all']), help='Models to train')
 @click.option('-b', '--balancing', 'balancing', required=True, multiple=True,
               type=click.Choice(
                   ['none', 'ros', 'smotenc', 'rus', 'nearmiss', 'enn', 'renn', 'allknn', 'onesided',
-                   'ncr', 'iht', 'globalcs', 'soup']), help='Balancing method')
+                   'ncr', 'iht', 'globalcs', 'soup', 'all']), help='Balancing method')
 @click.option('-i', '--in', 'in_file', required=False, multiple=False, help='Dataset file')
 @click.option('-bd', '--balanced-directory', 'balanced_directory', required=True, multiple=False,
               help='Path to directory containing balanced datasets')
@@ -37,11 +41,14 @@ def main(model, balancing, in_file, balanced_directory, result_directory, unbala
     ./balancing_main.py -m xgb -m tree -i data2.csv\n
     ./balancing_main.py -m reg -i data.csv -o some_results.csv\n
     """
+    if 'all' in balancing:
+        balancing = ALL_BALANCE
+
+    if 'all' in model:
+        model = ALL_MODELS
+
     print(model, balancing, in_file, balanced_directory, result_directory, unbalanced_filepath)
 
-    # preprocessing
-    # balancing
-    # model building
     resultDict = {}
 
     for resampler_name in balancing:
