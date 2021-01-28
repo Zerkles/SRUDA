@@ -86,38 +86,41 @@ class ModelBuilder:
         result = {}
 
         if self.model_name == 'xgb':
-            model = XGBClassifier(subsample=0.25,
-                                  n_estimators=270,
-                                  min_child_weight=3,
-                                  max_depth=7,
-                                  max_delta_step=4,
-                                  learning_rate=0.19,
-                                  gamma=6,
-                                  verbosity=0,
-                                  booster='gbtree',
-                                  n_jobs=-1,
-                                  use_label_encoder=False)
+            model = XGBClassifier(gamma=9,
+                                  learning_rate=0.003,
+                                  max_delta_step=1,
+                                  max_depth=6,
+                                  min_child_weight=7,
+                                  n_estimators=220,
+                                  subsample=0.8)
+            print(model)
+
             result['model'] = 'xgb'
         elif self.model_name == 'cat':
-            model = CatBoostClassifier(loss_function='Logloss',
-                                       scale_pos_weight=24.0,
-                                       reg_lambda=9.5,
-                                       n_estimators=80,
-                                       max_depth=6,
-                                       learning_rate=0.075,
-                                       border_count=165,
-                                       verbose=0)
+            p = {
+                'eval_metric': 'Logloss',
+                'loss_function': 'Logloss',
+                'iterations': 160,
+                'leaf_estimation_method': 'Newton',
+                'l2_leaf_reg': 2,
+                'subsample': 0.60,
+                'depth': 11,
+                'border_count': 200,
+                'score_function': 'Cosine',
+                'learning_rate': 0.01
+            }
+            model = CatBoostClassifier(**p)
             result['model'] = 'cat'
         elif self.model_name == 'reg':
-            model = LogisticRegression(tol=0.001,
+            model = LogisticRegression(tol=1e-06,
                                        solver='newton-cg',
                                        penalty='l2',
-                                       max_iter=1000,
+                                       max_iter=504,
                                        intercept_scaling=1.0,
                                        fit_intercept=True,
                                        dual=False,
-                                       class_weight='balanced',
-                                       C=0.0001,
+                                       class_weight=None,
+                                       C=0.1,
                                        verbose=1000)
             result['model'] = 'reg'
         elif self.model_name == 'tree':
@@ -138,6 +141,25 @@ class ModelBuilder:
                                            max_depth=9,
                                            class_weight='balanced',
                                            criterion='gini')
+            d = {'n_estimators': 130,
+                 'min_samples_split': 2,
+                 'min_samples_leaf': 1,
+                 'max_features': 'auto',
+                 'max_depth': 5,
+                 'criterion': 'gini',
+                 'bootstrap': True,
+                 'ccp_alpha': 0.0,
+                 'class_weight': None,
+                 'max_leaf_nodes': None,
+                 'max_samples': None,
+                 'min_impurity_decrease': 0.0,
+                 'min_impurity_split': None,
+                 'oob_score': False,
+                 'random_state': None,
+                 'verbose': 0,
+                 'warm_start': False
+                 }
+            model = RandomForestClassifier(**d)
             result['model'] = 'RandomForest'
         else:
             return {}, [], []
