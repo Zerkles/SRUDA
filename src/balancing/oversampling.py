@@ -11,4 +11,4 @@ def smotenc_optimized(X_columns_names: list):
         if key in features_dict.keys():
             features_dict.pop(key)
 
-    return SMOTENC(categorical_features=list(features_dict.values()), k_neighbors=49, n_jobs=-1)
+    return SMOTENC(categorical_features=list(features_dict.values()), n_jobs=-1)
