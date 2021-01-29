@@ -15,7 +15,6 @@ from sklearn.inspection import permutation_importance
 
 
 class Features:
-    """description of class"""
     
     def select_features_select_from_model_LR(X, y, columns, iteration):
         selection = SelectFromModel(estimator=LogisticRegression(max_iter=iteration)).fit(X, y)

@@ -136,10 +136,8 @@ class Analysis:
          #print(dataset)
          corr = dataset.corr()
          sns.heatmap(corr)
+         plt.tight_layout()
          plt.show()
-    
-
-   
 
     def check_Sale_and_product_price(self,matrix):
       unique, counts = np.unique(matrix[:,1], return_counts=True)
@@ -157,3 +155,17 @@ class Analysis:
                 count_1_in_sale_and_0_in_product_price+=1
         print("sale 0 and product 0:"+str(count_0_in_sale_and_product_price))
         print("sale 1 and product 0:"+str(count_1_in_sale_and_0_in_product_price))
+
+    def check_if_Sale_0_price_0(self, matrix):
+        price_equals_0_when_Sale_0=0
+        price_not_equals_0_when_Sale_0=0
+
+        for x in range(0,15995634):
+            if (matrix[x,1]=="0" ):
+                if(matrix[x,6]=="0.0"):
+                    price_equals_0_when_Sale_0+=1
+                else:
+                    price_not_equals_0_when_Sale_0
+      
+        print("price_equals_0_when_Sale_0:"+str(price_equals_0_when_Sale_0))
+        print("price_not_equals_0_when_Sale_0:"+str(price_not_equals_0_when_Sale_0))
