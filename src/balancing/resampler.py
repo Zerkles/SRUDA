@@ -14,8 +14,8 @@ class Resampler:
         if balancing_type == 'ros':
             return oversampling.random_over_sampler_optimized()
         elif balancing_type == 'smotenc':
-            max_samples = 10000
-            if self.unbalanced_dataset.shape[0] > max_samples:  # it just cant handle more than 10k samples because of ram
+            max_samples = 10000  # it just cant handle more than 10k samples because of ram
+            if self.unbalanced_dataset.shape[0] > max_samples:
                 self.X_unbalanced = self.X_unbalanced.head(max_samples)
                 self.y_unbalanced = self.y_unbalanced.head(max_samples)
             return oversampling.smotenc_optimized(self.X_unbalanced)
@@ -45,7 +45,7 @@ class Resampler:
     def get_name(self) -> str:
         return self.resampling_method_object.__str__().title().split("(")[0]
 
-    def set_params(self, **params):
+    def set_params(self, **params) -> None:
         self.resampling_method_object.set_params(**params)
 
     def get_params(self) -> str:

@@ -160,17 +160,13 @@ if __name__ == "__main__":
     filepath_logs = "../../plots/"
     filepath_data = '../../data/no_price_feature_selected/imbalance_set_no_price.csv'
 
-    res = Resampler('soup', filepath_data)
-    res.set_params(**{'maj_int_min': {
-        'maj': [0],  # indices of majority classes
-        'min': [1],  # indices of minority classes
-    }})  # setting common params
+    res = Resampler('smotenc', filepath_data)
+    res.set_params(**{'sampling_strategy': 'auto', 'random_state': 0, 'n_jobs': -1})  # setting common params
 
     max_n_neighbors = DataController.count_classes_size(res.y_unbalanced)[1] - 1
 
     value_dict = {
-        'k': get_n_elements_from_list(list(range(1400, 1500 + 1)), 25),
-        'shuffle': [True, False]
+        'k_neighbors': get_n_elements_from_list(list(range(2, 17)), 25),
     }
 
     opt = Optimizer(res, filepath_logs)
